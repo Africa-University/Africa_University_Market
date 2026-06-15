@@ -34,37 +34,37 @@ This project is developed using a structured GitHub workflow with clearly define
 
 
 
-##- \*\*Elson – Frontend Developer\*\*  
+## Elson – Frontend Developer
 
 &#x20; Responsible for UI design and frontend components (product pages, cart UI, layout design).
 
 
 
-##- \*\*Theophany – Frontend Developer\*\*  
+## Theophany – Frontend Developer
 
 &#x20; Supports frontend development including forms, navigation, and responsive design.
 
 
 
-##- \*\*Tendesai – Database Engineer\*\*  
+## Tendesai – Database Engineer  
 
 &#x20; Designs and manages database structure, relationships, and ensures data integrity.
 
 
 
-##- \*\*Kimberely – Ecommerce Features Developer\*\*  
+## Kimberely – Ecommerce Features Developer 
 
 &#x20; Implements core system logic such as shopping cart, checkout system, and product processing.
 
 
 
-##- \*\*Christisen – Admin \& Security Developer\*\*  
+## Christisen – Admin \& Security Developer  
 
 &#x20; Handles authentication, role-based access control, and admin dashboard security.
 
 
 
-##- \*\*Agribusiness Representative – Product Integrity \& Validation\*\*  
+## Agribusiness Representative – Product Integrity \& Validation 
 
 &#x20; Ensures agricultural accuracy of the system by validating:
 
@@ -80,7 +80,7 @@ This project is developed using a structured GitHub workflow with clearly define
 
 
 
-##- \*\*Tanaka – Project  (Documentation \& Testing)\*\*  
+## Tanaka – Project  (Documentation \& Testing) 
 
 &#x20; Responsible for:
 
@@ -96,11 +96,11 @@ This project is developed using a structured GitHub workflow with clearly define
 
 
 
-\---
+---
 
 
 
-\## Development Workflow
+## Development Workflow
 
 
 
@@ -108,23 +108,23 @@ The project follows a strict GitHub workflow:
 
 
 
-\### Main Branch (`main`)
+### Main Branch (`main`)
 
-\- Production-ready code only
+- Production-ready code only
 
-\- No direct commits allowed
-
-
-
-\### Development Branch (`dev`)
-
-\- Integration branch for tested features
-
-\- All pull requests are merged here first
+- No direct commits allowed
 
 
 
-\###  Feature Branches
+### Development Branch (`dev`)
+
+- Integration branch for tested features
+
+- All pull requests are merged here first
+
+
+
+###  Feature Branches
 
 Each feature is developed separately:
 
@@ -132,19 +132,19 @@ Each feature is developed separately:
 
 Examples:
 
-\- `feature-login`
+- `feature-login`
 
-\- `feature-cart`
+- `feature-cart`
 
-\- `feature-product-ui`
-
-
-
-\---
+- `feature-product-ui`
 
 
 
-\## Git Workflow Process
+---
+
+
+
+## Git Workflow Process
 
 
 
