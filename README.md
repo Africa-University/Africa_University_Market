@@ -1,28 +1,28 @@
-\# Africa University Agricultural Products Website
+## Africa University Agricultural Products Website
 
 
 
-\## Project Overview
+## Project Overview
 
 The Africa University Agricultural Products Website is a web-based e-commerce platform designed to allow Africa University to efficiently market and sell its agricultural products online. The system improves accessibility, communication, and digital management of agricultural goods such as vegetables, fruits, dairy, poultry, and crops.
 
 
 
-\---
+---
 
 
 
-\##  Project Goal
+##  Project Goal
 
 To develop a fully functional agricultural e-commerce platform that enables Africa University to manage, advertise, and sell agricultural products online while ensuring usability, scalability, and real-world agricultural accuracy.
 
 
 
-\---
+---
 
 
 
-\## Project Team Structure
+## Project Team Structure
 
 
 
@@ -30,41 +30,41 @@ This project is developed using a structured GitHub workflow with clearly define
 
 
 
-\### Development Team
+### Development Team
 
 
 
-\- \*\*Elson – Frontend Developer\*\*  
+##- \*\*Elson – Frontend Developer\*\*  
 
 &#x20; Responsible for UI design and frontend components (product pages, cart UI, layout design).
 
 
 
-\- \*\*Theophany – Frontend Developer\*\*  
+##- \*\*Theophany – Frontend Developer\*\*  
 
 &#x20; Supports frontend development including forms, navigation, and responsive design.
 
 
 
-\- \*\*Tendesai – Database Engineer\*\*  
+##- \*\*Tendesai – Database Engineer\*\*  
 
 &#x20; Designs and manages database structure, relationships, and ensures data integrity.
 
 
 
-\- \*\*Kimberely – Ecommerce Features Developer\*\*  
+##- \*\*Kimberely – Ecommerce Features Developer\*\*  
 
 &#x20; Implements core system logic such as shopping cart, checkout system, and product processing.
 
 
 
-\- \*\*Christisen – Admin \& Security Developer\*\*  
+##- \*\*Christisen – Admin \& Security Developer\*\*  
 
 &#x20; Handles authentication, role-based access control, and admin dashboard security.
 
 
 
-\- \*\*Agribusiness Representative – Product Integrity \& Validation\*\*  
+##- \*\*Agribusiness Representative – Product Integrity \& Validation\*\*  
 
 &#x20; Ensures agricultural accuracy of the system by validating:
 
@@ -80,7 +80,7 @@ This project is developed using a structured GitHub workflow with clearly define
 
 
 
-\- \*\*Tanaka – Project  (Documentation \& Testing)\*\*  
+##- \*\*Tanaka – Project  (Documentation \& Testing)\*\*  
 
 &#x20; Responsible for:
 
