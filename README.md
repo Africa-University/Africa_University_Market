@@ -1,168 +1,168 @@
-## Africa University Agricultural Products Website
-
-
+# Africa University Agricultural Products Website
 
 ## Project Overview
 
-The Africa University Agricultural Products Website is a web-based e-commerce platform designed to allow Africa University to efficiently market and sell its agricultural products online. The system improves accessibility, communication, and digital management of agricultural goods such as vegetables, fruits, dairy, poultry, and crops.
+The Africa University Agricultural Products Website is a web-based e-commerce platform designed to enable Africa University to efficiently market and sell its agricultural products online. The system improves accessibility, communication, and digital management of agricultural goods such as vegetables, fruits, dairy products, poultry products, and crops.
 
+## Project Goal
 
-
----
-
-
-
-##  Project Goal
-
-To develop a fully functional agricultural e-commerce platform that enables Africa University to manage, advertise, and sell agricultural products online while ensuring usability, scalability, and real-world agricultural accuracy.
-
-
+To develop a fully functional agricultural e-commerce platform that enables Africa University to manage, advertise, and sell agricultural products online while ensuring usability, scalability, security, and real-world agricultural accuracy.
 
 ---
 
+# Project Team Structure
 
+This project is developed using a structured GitHub workflow with clearly defined roles and responsibilities.
 
-## Project Team Structure
+## Development Team
 
+### Elson – Frontend Developer
 
+Responsible for:
 
-This project is developed using a structured GitHub workflow with clearly defined roles.
+* User Interface (UI) design
+* Product display pages
+* Shopping cart interface
+* Responsive layouts and styling
 
+### Theophany – Frontend Developer
 
+Responsible for:
 
-### Development Team
+* Navigation system
+* Forms and user interactions
+* Mobile responsiveness
+* Frontend support and integration
 
+### Tendesai – Database Engineer
 
+Responsible for:
 
-## Elson – Frontend Developer
+* Database design
+* Table relationships
+* Data storage and retrieval
+* Data integrity and optimization
 
-&#x20; Responsible for UI design and frontend components (product pages, cart UI, layout design).
+### Kimberely – E-commerce Features Developer
 
+Responsible for:
 
+* Shopping cart functionality
+* Checkout process
+* Product ordering workflow
+* Transaction processing logic
 
-## Theophany – Frontend Developer
+### Christisen – Admin & Security Developer
 
-&#x20; Supports frontend development including forms, navigation, and responsive design.
+Responsible for:
 
+* User authentication
+* Role-based access control
+* Admin dashboard functionality
+* System security implementation
 
+### Nyasha – Agribusiness Representative (Product Integrity & Validation)
 
-## Tendesai – Database Engineer  
+Responsible for:
 
-&#x20; Designs and manages database structure, relationships, and ensures data integrity.
+* Validating product categories
+* Verifying agricultural product descriptions
+* Reviewing pricing accuracy
+* Monitoring stock level realism
+* Ensuring alignment with Africa University agricultural operations
+* Providing agricultural domain expertise and feedback
 
+### Tanaka – Project Lead, Documentation & Testing
 
+Responsible for:
 
-## Kimberely – Ecommerce Features Developer 
-
-&#x20; Implements core system logic such as shopping cart, checkout system, and product processing.
-
-
-
-## Christisen – Admin \& Security Developer  
-
-&#x20; Handles authentication, role-based access control, and admin dashboard security.
-
-
-
-## Agribusiness Representative – Product Integrity \& Validation 
-
-&#x20; Ensures agricultural accuracy of the system by validating:
-
-&#x20; - Product categories
-
-&#x20; - Pricing realism
-
-&#x20; - Stock levels
-
-&#x20; - Product descriptions
-
-&#x20; - Alignment with real agricultural operations
-
-
-
-## Tanaka – Project  (Documentation \& Testing) 
-
-&#x20; Responsible for:
-
-&#x20; - System documentation (README, guides, reports)
-
-&#x20; - Testing all features before deployment
-
-&#x20; - Bug tracking and quality assurance
-
-&#x20; - Reviewing pull requests before merging
-
-&#x20; - Overseeing final deployment
-
-
+* Project coordination and oversight
+* System documentation (README, reports, user guides)
+* Feature testing and quality assurance
+* Bug tracking and issue management
+* Pull request review and approval
+* GitHub workflow management
+* Final deployment coordination
 
 ---
 
+# Development Workflow
 
+## Main Branch (main)
 
-## Development Workflow
+* Production-ready code only
+* No direct commits allowed
+* Receives code only from approved pull requests
 
+## Development Branch (dev)
 
+* Integration branch for completed features
+* All pull requests are merged here first
+* Used for testing before production deployment
 
-The project follows a strict GitHub workflow:
+## Feature Branches
 
-
-
-### Main Branch (`main`)
-
-- Production-ready code only
-
-- No direct commits allowed
-
-
-
-### Development Branch (`dev`)
-
-- Integration branch for tested features
-
-- All pull requests are merged here first
-
-
-
-###  Feature Branches
-
-Each feature is developed separately:
-
-
+Each feature must be developed in its own branch.
 
 Examples:
 
-- `feature-login`
-
-- `feature-cart`
-
-- `feature-product-ui`
-
-
+* feature-login
+* feature-product-ui
+* feature-cart
+* feature-checkout
+* feature-admin-dashboard
 
 ---
 
-
-
-## Git Workflow Process
-
-
+# Git Workflow Process
 
 All contributors must follow this workflow:
 
-
-
 ```bash
-
 git pull origin dev
 
 git checkout -b feature-name
 
-\# work on feature
+# Work on your feature
 
 git add .
 
-git commit -m "feature description"
+git commit -m "Describe feature implemented"
 
 git push origin feature-name
+```
+
+Then:
+
+1. Create a Pull Request to the `dev` branch.
+2. Request review from the Project Lead.
+3. Address any requested changes.
+4. Merge into `dev` after approval.
+5. Features in `dev` are tested before eventual merge into `main`.
+
+---
+
+# Quality Assurance Process
+
+Before merging into `main`:
+
+* All features must be tested.
+* No critical bugs should remain.
+* Documentation must be updated.
+* Agribusiness validation must be completed.
+* Pull requests must be reviewed and approved.
+
+---
+
+# Expected Deliverables
+
+* Responsive Agricultural E-commerce Website
+* Product Catalog Management
+* Shopping Cart System
+* User Authentication System
+* Admin Dashboard
+* Database System
+* Documentation and Testing Reports
+* Deployment to Production Environment
+
 
