@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Africa University Market{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Admin Dashboard</h2>
+    <p>Only admin users can access this page. Use it to manage products, orders, and site settings.</p>
+    <div class="admin-summary">
+        <div class="admin-card">
+            <h3>Admin Actions</h3>
+            <ul>
+                <li>Manage products</li>
+                <li>Review orders</li>
+                <li>Update site content</li>
+            </ul>
+        </div>
+        <div class="admin-card">
+            <h3>Account</h3>
+            <p>{{ g.user.fullname }} ({{ g.user.email }})</p>
+            <p>Role: {{ g.user.role|capitalize }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

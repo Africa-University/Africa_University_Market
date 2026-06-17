@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Africa University Market{% endblock %}</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="{{ url_for('home') }}" class="navbar-brand">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Africa University Logo">
+        </a>
+        <ul class="navbar-nav">
+            <li><a href="{{ url_for('home') }}" class="nav-link">Home</a></li>
+            <li><a href="#" class="nav-link">Shop</a></li>
+            <li><a href="#" class="nav-link">Categories</a></li>
+            {% if g.user %}
+                <li><a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a></li>
+                {% if g.user.role == 'admin' %}
+                    <li><a href="{{ url_for('admin') }}" class="nav-link">Admin</a></li>
+                {% endif %}
+                <li><a href="{{ url_for('logout') }}" class="nav-link">Logout</a></li>
+            {% else %}
+                <li><a href="{{ url_for('login') }}" class="nav-link">Login</a></li>
+                <li><a href="{{ url_for('admin_login') }}" class="nav-link">Admin Login</a></li>
+                <li><a href="{{ url_for('register') }}" class="btn btn-primary">Sign Up</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div id="flash-alerts-container" class="container" style="margin-top: 2rem; margin-bottom: -2rem; transition: all 0.5s ease;">
+                    <div class="form-alerts">
+                        {% for category, message in messages %}
+                            <div class="form-alert form-alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Africa University Agricultural Products. All rights reserved.</p>
+        <p>Providing fresh, local produce directly from our farms to your table.</p>
+    </footer>
+
+    <!-- Interactive Navbar Script -->
+    <script>
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('navbar-scrolled');
+            } else {
+                navbar.classList.remove('navbar-scrolled');
+            }
+        });
+
+        // Auto-hide alert messages after 5 seconds
+        setTimeout(function() {
+            const container = document.getElementById('flash-alerts-container');
+            if (container) {
+                container.style.opacity = '0';
+                container.style.marginTop = '0';
+                container.style.marginBottom = '0';
+                setTimeout(function() {
+                    container.style.display = 'none';
+                }, 500);
+            }
+        }, 5000);
+    </script>
+</body>
+</html>
