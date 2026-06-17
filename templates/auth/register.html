@@ -6,7 +6,7 @@
 <div class="container">
     <div class="form-container">
         <h2 class="form-title">Create an Account</h2>
-        <form action="#" method="POST">
+        <form action="{{ url_for('register') }}" method="POST">
             <div class="form-group">
                 <label for="fullname" class="form-label">Full Name</label>
                 <input type="text" id="fullname" name="fullname" class="form-control" placeholder="John Doe" required>

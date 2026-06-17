@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Africa University Market{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Welcome back, {{ g.user.fullname }}!</h2>
+    <p>This is your personal dashboard.</p>
+    <div class="dashboard-cards">
+        <div class="dashboard-card">
+            <h3>Your Role</h3>
+            <p>{{ g.user.role|capitalize }}</p>
+        </div>
+        <div class="dashboard-card">
+            <h3>Account Email</h3>
+            <p>{{ g.user.email }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
