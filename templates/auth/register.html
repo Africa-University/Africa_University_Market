@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up - Africa University Market{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container">
+        <h2 class="form-title">Create an Account</h2>
+        <form action="#" method="POST">
+            <div class="form-group">
+                <label for="fullname" class="form-label">Full Name</label>
+                <input type="text" id="fullname" name="fullname" class="form-control" placeholder="John Doe" required>
+            </div>
+            <div class="form-group">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" id="email" name="email" class="form-control" placeholder="student@africau.edu" required>
+            </div>
+            <div class="form-group">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="Create a strong password" required>
+            </div>
+            <div class="form-group">
+                <label for="confirm_password" class="form-label">Confirm Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder="Repeat your password" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
+        </form>
+        <div class="form-footer">
+            <p>Already have an account? <a href="{{ url_for('login') }}">Log in</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
