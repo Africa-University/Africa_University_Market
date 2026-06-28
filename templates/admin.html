@@ -7,9 +7,10 @@
     <h2>Admin Dashboard</h2>
     <p>Only admin users can access this page. Use it to manage products, orders, and site settings.</p>
     <div class="admin-summary">
-        <div class="admin-card">
+<div class="admin-card">
             <h3>Admin Actions</h3>
             <ul>
+                <li><a href="{{ url_for('add_product') }}">Add New Product</a></li>
                 <li>Manage products</li>
                 <li>Review orders</li>
                 <li>Update site content</li>
