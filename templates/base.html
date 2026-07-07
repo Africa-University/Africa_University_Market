@@ -19,7 +19,7 @@
         </a>
         <ul class="navbar-nav">
             <li><a href="{{ url_for('home') }}" class="nav-link">Home</a></li>
-            <li><a href="#" class="nav-link">Shop</a></li>
+            <li><a href="{{ url_for('products') }}" class="nav-link">Shop</a></li>
             <li><a href="#" class="nav-link">Categories</a></li>
             {% if g.user %}
                 <li><a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a></li>

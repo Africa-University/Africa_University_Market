@@ -162,6 +162,11 @@ app.config["UPLOAD_FOLDER"] = os.path.join(
 def home():
     return render_template("index.html")
 
+@app.route("/products")
+def products():
+    products = Product.query.all()
+    return render_template("products.html", products=products)
+
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
