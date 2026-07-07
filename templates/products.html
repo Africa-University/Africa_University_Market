@@ -11,22 +11,24 @@
     <div class="product-grid">
         {% for product in products %}
         <div class="product-card">
-            <div class="product-image-container">
-                <span class="product-category">{{ product.category.name }}</span>
-                {% if product.image %}
-                    <img src="{{ url_for('static', filename='uploads/' + product.image) }}" alt="{{ product.name }}" class="product-image">
-                {% else %}
-                    <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80" alt="Placeholder" class="product-image">
-                {% endif %}
-            </div>
-            <div class="product-details">
-                <h3 class="product-title">{{ product.name }}</h3>
-                <p class="product-description">{{ product.description }}</p>
-                <div class="product-price">${{ "%.2f"|format(product.price) }} {% if product.stock > 0 %}<small style="font-size: 0.8rem; color: #666; font-weight: normal;">({{ product.stock }} in stock)</small>{% endif %}</div>
-                <div class="product-actions">
-                    <button class="btn btn-primary btn-block">Add to Cart</button>
+            <a href="{{ url_for('product_detail', product_id=product.id) }}" style="text-decoration: none; color: inherit;">
+                <div class="product-image-container">
+                    <span class="product-category">{{ product.category.name }}</span>
+                    {% if product.image %}
+                        <img src="{{ url_for('static', filename='uploads/' + product.image) }}" alt="{{ product.name }}" class="product-image">
+                    {% else %}
+                        <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80" alt="Placeholder" class="product-image">
+                    {% endif %}
                 </div>
+                <div class="product-details">
+                    <h3 class="product-title">{{ product.name }}</h3>
+                    <p class="product-description">{{ product.description }}</p>
+                    <div class="product-price">${{ "%.2f"|format(product.price) }} {% if product.stock > 0 %}<small style="font-size: 0.8rem; color: #666; font-weight: normal;">({{ product.stock }} in stock)</small>{% endif %}</div>
+            </a>
+            <div class="product-actions" style="margin-top: auto; padding-top: 1rem;">
+                <button class="btn btn-primary btn-block">Add to Cart</button>
             </div>
+                </div>
         </div>
         {% else %}
         <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; background: #f9f9f9; border-radius: 8px;">
