@@ -21,6 +21,9 @@
             <li><a href="{{ url_for('home') }}" class="nav-link">Home</a></li>
             <li><a href="{{ url_for('products') }}" class="nav-link">Shop</a></li>
             <li><a href="#" class="nav-link">Categories</a></li>
+            <li><a href="{{ url_for('cart') }}" class="nav-link">Cart 
+                <span style="background: #2e7d32; color: white; padding: 0.1rem 0.5rem; border-radius: 50%; font-size: 0.8rem; margin-left: 0.2rem;">2</span>
+            </a></li>
             {% if g.user %}
                 <li><a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a></li>
                 {% if g.user.role == 'admin' %}
