@@ -162,6 +162,26 @@ app.config["UPLOAD_FOLDER"] = os.path.join(
 def home():
     return render_template("index.html")
 
+@app.route("/products")
+def products():
+    products = Product.query.all()
+    return render_template("products.html", products=products)
+
+@app.route("/product/<int:product_id>")
+def product_detail(product_id):
+    product = Product.query.get_or_404(product_id)
+    return render_template("product_detail.html", product=product)
+
+@app.route("/cart")
+def cart():
+    # Placeholder cart data for UI demonstration purposes
+    # Logic will be implemented in Issue #10 / #11 by Kimberely
+    placeholder_cart = [
+        {"id": 1, "name": "Organic Roma Tomatoes", "price": 2.50, "quantity": 2, "image": None},
+        {"id": 2, "name": "Fresh Full-Cream Milk", "price": 1.20, "quantity": 3, "image": None}
+    ]
+    return render_template("cart.html", cart=placeholder_cart)
+
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
