@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Shop - Africa University Market{% endblock %}
+{% block meta_description %}Browse the Africa University Market catalog for fresh vegetables, fruits, dairy, and poultry.{% endblock %}
+
+{% block content %}
+<section class="container" style="margin-top: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2 class="section-title" style="margin-bottom: 0;">Our Products</h2>
+    </div>
+
+    <div class="product-grid">
+        {% for product in products %}
+        <div class="product-card">
+            <a href="{{ url_for('product_detail', product_id=product.id) }}" style="text-decoration: none; color: inherit;">
+                <div class="product-image-container">
+                    <span class="product-category">{{ product.category.name }}</span>
+                    {% if product.image %}
+                        <img src="{{ url_for('static', filename='uploads/' + product.image) }}" alt="{{ product.name }}" class="product-image">
+                    {% else %}
+                        <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80" alt="Placeholder" class="product-image">
+                    {% endif %}
+                </div>
+                <div class="product-details">
+                    <h3 class="product-title">{{ product.name }}</h3>
+                    <p class="product-description">{{ product.description }}</p>
+                    <div class="product-price">${{ "%.2f"|format(product.price) }} {% if product.stock > 0 %}<small style="font-size: 0.8rem; color: var(--text-secondary); font-weight: normal;">({{ product.stock }} in stock)</small>{% endif %}</div>
+            </a>
+            <div class="product-actions" style="margin-top: auto; padding-top: 1rem;">
+                <button class="btn btn-primary btn-block">Add to Cart</button>
+            </div>
+                </div>
+        </div>
+        {% else %}
+        <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; background: var(--surface-color); border-radius: var(--radius); box-shadow: var(--shadow-sm);">
+            <p style="color: var(--text-secondary); font-size: 1.1rem;">No products available at the moment. Please check back later.</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

@@ -13,9 +13,10 @@ from flask import (
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from config import Config
+from models import db, Product
+import os
 
-db = SQLAlchemy()
-
+from werkzeug.utils import secure_filename
 
 # =========================
 # USER MODEL
@@ -52,29 +53,7 @@ class Category(db.Model):
         "Product",
         backref="category",
         lazy=True
-    )
-
-
-# =========================
-# PRODUCT MODEL
-# =========================
-class Product(db.Model):
-    __tablename__ = "products"
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    price = db.Column(db.Float, nullable=False)
-    stock = db.Column(db.Integer, default=0)
-    image = db.Column(db.String(255))
-    description = db.Column(db.Text)
-
-    category_id = db.Column(
-        db.Integer,
-        db.ForeignKey("categories.id"),
-        nullable=False
-    )
-
-
+    ) 
 # =========================
 # DECORATORS
 # =========================
@@ -136,6 +115,23 @@ def create_app():
                 " admin@africau.edu / Admin123!"
             )
 
+        # Create default categories if none exist
+        if Category.query.count() == 0:
+            default_categories = [
+                "Grains & Cereals",
+                "Vegetables",
+                "Fruits",
+                "Dairy & Eggs",
+                "Meat & Poultry",
+                "Herbs & Spices",
+                "Honey & Preserves",
+                "Seeds & Seedlings"
+            ]
+            for cat_name in default_categories:
+                db.session.add(Category(name=cat_name))
+            db.session.commit()
+            print("Default categories created.")
+
         print("SQLite database initialized successfully.")
 
     @app.before_request
@@ -151,6 +147,12 @@ def create_app():
 
 
 app = create_app()
+import os
+
+app.config["UPLOAD_FOLDER"] = os.path.join(
+    app.root_path,
+    "static/uploads"
+)
 
 
 # =========================
@@ -159,6 +161,26 @@ app = create_app()
 @app.route("/")
 def home():
     return render_template("index.html")
+
+@app.route("/products")
+def products():
+    products = Product.query.all()
+    return render_template("products.html", products=products)
+
+@app.route("/product/<int:product_id>")
+def product_detail(product_id):
+    product = Product.query.get_or_404(product_id)
+    return render_template("product_detail.html", product=product)
+
+@app.route("/cart")
+def cart():
+    # Placeholder cart data for UI demonstration purposes
+    # Logic will be implemented in Issue #10 / #11 by Kimberely
+    placeholder_cart = [
+        {"id": 1, "name": "Organic Roma Tomatoes", "price": 2.50, "quantity": 2, "image": None},
+        {"id": 2, "name": "Fresh Full-Cream Milk", "price": 1.20, "quantity": 3, "image": None}
+    ]
+    return render_template("cart.html", cart=placeholder_cart)
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -269,7 +291,58 @@ def admin():
 
 @app.errorhandler(403)
 def forbidden(error):
-    return render_template("403.html"), 403
+    return render_template("403.html"),403
+
+@app.route("/admin/products/add", methods=["GET", "POST"])
+@role_required("admin")
+def add_product():
+
+    categories = Category.query.all()
+
+    if request.method == "POST":
+
+        name = request.form.get("name")
+        description = request.form.get("description")
+        price = request.form.get("price")
+        category_id = request.form.get("category_id")
+
+        image_file = request.files.get("image")
+
+        image_name = None
+
+        if image_file and image_file.filename:
+
+            image_name = secure_filename(
+                image_file.filename
+            )
+
+            image_file.save(
+                os.path.join(
+                    app.config["UPLOAD_FOLDER"],
+                    image_name
+                )
+            )
+
+        product = Product(
+            name=name,
+            description=description,
+            price=float(price),
+            image=image_name,
+            category_id=category_id
+        )
+
+        db.session.add(product)
+        db.session.commit()
+
+        flash("Product added successfully.", "success")
+
+        return redirect(url_for("admin"))
+
+    return render_template(
+        "admin/add_product.html",
+        categories=categories
+    )
+
 
 
 # =========================
