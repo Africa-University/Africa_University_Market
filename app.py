@@ -155,6 +155,18 @@ app.config["UPLOAD_FOLDER"] = os.path.join(
 )
 
 
+@app.context_processor
+def inject_cart():
+    # Placeholder global cart for Issue #11 UI Display.
+    # Kimberely will connect this to the session/database logic.
+    mock_cart = [
+        {"id": 1, "name": "Organic Roma Tomatoes", "price": 2.50, "quantity": 2, "image": None},
+        {"id": 2, "name": "Fresh Full-Cream Milk", "price": 1.20, "quantity": 3, "image": None}
+    ]
+    mock_total = sum(item["price"] * item["quantity"] for item in mock_cart)
+    
+    return dict(global_cart=mock_cart, global_cart_total=mock_total)
+
 # =========================
 # ROUTES
 # =========================
