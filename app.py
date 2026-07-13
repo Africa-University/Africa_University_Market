@@ -263,6 +263,65 @@ def dashboard():
     return render_template("dashboard.html")
 
 
+@app.route("/shop")
+def shop():
+    products = Product.query.all()
+    return render_template("shop.html", products=products)
+
+
+@app.route("/cart")
+def view_cart():
+    cart = session.get("cart", {})
+    cart_items = []
+    total = 0.0
+    for product_id, item in cart.items():
+        product = Product.query.get(int(product_id))
+        if product:
+            subtotal = product.price * item["quantity"]
+            total += subtotal
+            cart_items.append({
+                "product": product,
+                "quantity": item["quantity"],
+                "subtotal": subtotal
+            })
+    return render_template("cart.html", cart_items=cart_items, total=total)
+
+
+@app.route("/add-to-cart/<int:product_id>")
+def add_to_cart(product_id):
+    product = Product.query.get_or_404(product_id)
+    cart = session.get("cart", {})
+    key = str(product_id)
+    if key in cart:
+        cart[key]["quantity"] += 1
+    else:
+        cart[key] = {"quantity": 1}
+    session["cart"] = cart
+    flash(f'"{product.name}" added to cart.', "success")
+    return redirect(request.referrer or url_for("shop"))
+
+
+@app.route("/update-cart/<int:product_id>/<int:quantity>")
+def update_cart(product_id, quantity):
+    cart = session.get("cart", {})
+    key = str(product_id)
+    if quantity > 0:
+        cart[key] = {"quantity": quantity}
+    else:
+        cart.pop(key, None)
+    session["cart"] = cart
+    return redirect(url_for("view_cart"))
+
+
+@app.route("/remove-from-cart/<int:product_id>")
+def remove_from_cart(product_id):
+    cart = session.get("cart", {})
+    cart.pop(str(product_id), None)
+    session["cart"] = cart
+    flash("Item removed from cart.", "info")
+    return redirect(url_for("view_cart"))
+
+
 @app.route("/admin")
 @role_required("admin")
 def admin():

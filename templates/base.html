@@ -19,8 +19,14 @@
         </a>
         <ul class="navbar-nav">
             <li><a href="{{ url_for('home') }}" class="nav-link">Home</a></li>
-            <li><a href="#" class="nav-link">Shop</a></li>
-            <li><a href="#" class="nav-link">Categories</a></li>
+            <li><a href="{{ url_for('shop') }}" class="nav-link">Shop</a></li>
+            <li><a href="{{ url_for('view_cart') }}" class="nav-link cart-link">
+                Cart
+                {% set cart_count = session.get('cart', {})|length %}
+                {% if cart_count > 0 %}
+                    <span class="cart-badge">{{ cart_count }}</span>
+                {% endif %}
+            </a></li>
             {% if g.user %}
                 <li><a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a></li>
                 {% if g.user.role == 'admin' %}
@@ -56,6 +62,9 @@
         <p>&copy; 2026 Africa University Agricultural Products. All rights reserved.</p>
         <p>Providing fresh, local produce directly from our farms to your table.</p>
     </footer>
+
+    {% block scripts %}
+    {% endblock %}
 
     <!-- Interactive Navbar Script -->
     <script>
