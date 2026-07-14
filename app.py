@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from functools import wraps
 from flask import (
     Flask,
@@ -13,7 +14,7 @@ from flask import (
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from config import Config
-from models import db, Product
+from models import db, Product, Category
 import os
 
 from werkzeug.utils import secure_filename
@@ -40,20 +41,6 @@ class User(db.Model):
         return self.role == "admin"
 
 
-# =========================
-# CATEGORY MODEL
-# =========================
-class Category(db.Model):
-    __tablename__ = "categories"
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False, unique=True)
-
-    products = db.relationship(
-        "Product",
-        backref="category",
-        lazy=True
-    ) 
 # =========================
 # DECORATORS
 # =========================
@@ -270,13 +257,44 @@ def remove_from_cart(product_id):
 
 @app.route("/checkout", methods=["POST"])
 def checkout():
-    if not session.get("cart"):
+    cart_items = get_cart_items()
+
+    if not cart_items:
         flash("Your cart is empty.", "warning")
         return redirect(url_for("cart"))
 
+    total = round(sum(item["price"] * item["quantity"] for item in cart_items), 2)
+    receipt = {
+        "order_number": f"AU-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}",
+        "date": datetime.now(timezone.utc).strftime("%B %d, %Y at %I:%M %p"),
+        "customer": g.user.fullname if g.user else "Guest Customer",
+        "email": g.user.email if g.user else "",
+        "line_items": [
+            {
+                "name": item["name"],
+                "quantity": item["quantity"],
+                "price": round(float(item["price"]), 2),
+                "subtotal": round(float(item["price"] * item["quantity"]), 2),
+            }
+            for item in cart_items
+        ],
+        "total": total,
+        "payment_method": "Cash on pickup",
+    }
+
     session["cart"] = []
-    flash("Checkout completed successfully. Thank you!", "success")
-    return redirect(url_for("home"))
+    session["last_receipt"] = receipt
+    flash(f"Checkout completed successfully. Receipt #{receipt['order_number']} is ready.", "success")
+    return redirect(url_for("receipt"))
+
+
+@app.route("/receipt")
+def receipt():
+    receipt_data = session.get("last_receipt")
+    if not receipt_data:
+        flash("No receipt available yet.", "info")
+        return redirect(url_for("home"))
+    return render_template("receipt.html", receipt=receipt_data)
 
 
 @app.route("/register", methods=["GET", "POST"])

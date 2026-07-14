@@ -14,15 +14,15 @@ class CartFlowTestCase(unittest.TestCase):
             db.drop_all()
             db.create_all()
 
-            category = Category(name="Test Category")
+            category = Category(name="Vegetables")
             db.session.add(category)
             db.session.commit()
 
             product = Product(
-                name="Test Product",
+                name="Tomatoes",
                 price=5.99,
                 stock=10,
-                description="A sample test product",
+                description="Fresh tomatoes from the farm",
                 category_id=category.id,
             )
             db.session.add(product)
@@ -56,6 +56,10 @@ class CartFlowTestCase(unittest.TestCase):
 
         with self.client.session_transaction() as session:
             self.assertEqual(session.get("cart"), [])
+            self.assertIn("last_receipt", session)
+            self.assertEqual(session["last_receipt"]["total"], 17.97)
+
+        self.assertIn(b"Receipt", checkout_response.get_data(as_text=True))
 
 
 if __name__ == "__main__":
