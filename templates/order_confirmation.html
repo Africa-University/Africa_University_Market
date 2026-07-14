@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Order Confirmed - Africa University Market{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="confirmation-box">
+        <div class="confirmation-icon">&#10003;</div>
+        <h2>Order Confirmed!</h2>
+        <p class="confirmation-id">Order #{{ order.id }}</p>
+        <p class="confirmation-message">Thank you, <strong>{{ order.fullname }}</strong>. Your order has been placed successfully.</p>
+
+        <div class="confirmation-details">
+            <div class="confirmation-section">
+                <h3>Delivery Details</h3>
+                <p><strong>Address:</strong> {{ order.address }}</p>
+                <p><strong>Phone:</strong> {{ order.phone }}</p>
+            </div>
+
+            <div class="confirmation-section">
+                <h3>Order Summary</h3>
+                <div class="summary-row">
+                    <span>Items</span>
+                    <span>{{ order.items|length }}</span>
+                </div>
+                <div class="summary-row summary-divider"></div>
+                {% for item in order.items %}
+                <div class="summary-row summary-line-item">
+                    <span>{{ item.product_name }} × {{ item.quantity }}</span>
+                    <span class="line-total">${{ "%.2f"|format(item.price * item.quantity) }}</span>
+                </div>
+                {% endfor %}
+                <div class="summary-row summary-divider"></div>
+                <div class="summary-row summary-total">
+                    <span>Total</span>
+                    <span>${{ "%.2f"|format(order.total_amount) }}</span>
+                </div>
+            </div>
+
+            <div class="confirmation-section">
+                <h3>Status</h3>
+                <span class="status-badge status-pending">{{ order.status|title }}</span>
+                <p class="status-note">Your order is being processed. You will receive updates via phone.</p>
+            </div>
+        </div>
+
+        <div class="confirmation-actions">
+            <a href="{{ url_for('shop') }}" class="btn btn-primary">Continue Shopping</a>
+            <a href="{{ url_for('home') }}" class="btn btn-outline" style="margin-top: 0.5rem;">Back to Home</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

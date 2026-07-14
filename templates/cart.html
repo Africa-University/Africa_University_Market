@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+
+{% block title %}Cart - Africa University Market{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="section-title">Your Shopping Cart</h2>
+
+    {% if cart_items %}
+        <div class="cart-layout">
+            <div class="cart-items">
+                {% for item in cart_items %}
+                <div class="cart-item" data-product-id="{{ item.product.id }}" data-price="{{ item.product.price }}">
+                    <div class="cart-item-image">
+                        {% if item.product.image %}
+                            <img src="{{ url_for('static', filename='uploads/' + item.product.image) }}" alt="{{ item.product.name }}">
+                        {% else %}
+                            <div class="cart-item-placeholder">{{ item.product.name[0] }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="cart-item-info">
+                        <h3 class="cart-item-title">{{ item.product.name }}</h3>
+                        {% if item.product.category %}
+                            <span class="cart-item-category">{{ item.product.category.name }}</span>
+                        {% endif %}
+                        <div class="cart-item-price">${{ "%.2f"|format(item.product.price) }}</div>
+                    </div>
+                    <div class="cart-item-quantity">
+                        <label>Qty</label>
+                        <div class="quantity-controls">
+                            <button class="qty-btn qty-minus" data-action="decrease">−</button>
+                            <input type="number" class="qty-input" value="{{ item.quantity }}" min="1" max="99" data-update-url="{{ url_for('update_cart', product_id=item.product.id, quantity=0) }}">
+                            <button class="qty-btn qty-plus" data-action="increase">+</button>
+                        </div>
+                    </div>
+                    <div class="cart-item-subtotal">
+                        <span class="subtotal-label">Subtotal</span>
+                        <span class="subtotal-value" data-subtotal="{{ item.subtotal }}">${{ "%.2f"|format(item.subtotal) }}</span>
+                    </div>
+                    <div class="cart-item-remove">
+                        <a href="{{ url_for('remove_from_cart', product_id=item.product.id) }}" class="btn-remove" title="Remove item">&times;</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="cart-summary">
+                <h3>Order Summary</h3>
+                <div class="summary-row">
+                    <span>Items</span>
+                    <span id="cart-items-count">{{ cart_items|length }}</span>
+                </div>
+                <div class="summary-row summary-divider"></div>
+                {% for item in cart_items %}
+                <div class="summary-row summary-line-item">
+                    <span>{{ item.product.name }} × {{ item.quantity }}</span>
+                    <span class="line-total">${{ "%.2f"|format(item.subtotal) }}</span>
+                </div>
+                {% endfor %}
+                <div class="summary-row summary-divider"></div>
+                <div class="summary-row summary-total">
+                    <span>Total</span>
+                    <span id="cart-grand-total">${{ "%.2f"|format(total) }}</span>
+                </div>
+                <a href="{{ url_for('checkout') }}" class="btn btn-primary btn-block btn-checkout">Proceed to Checkout</a>
+                <a href="{{ url_for('shop') }}" class="btn btn-outline btn-block" style="margin-top: 0.5rem;">Continue Shopping</a>
+            </div>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-cart-icon">🛒</div>
+            <h3>Your cart is empty</h3>
+            <p>Looks like you haven't added anything yet. Browse our fresh products!</p>
+            <a href="{{ url_for('shop') }}" class="btn btn-primary">Start Shopping</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+    // ========== DYNAMIC CART TOTAL CALCULATOR ==========
+    // This script automatically recalculates all totals
+    // whenever the user changes a quantity, ensuring the
+    // cart total is always accurate.
+    // ===================================================
+
+    const cartItems = document.querySelectorAll('.cart-item');
+    const grandTotalEl = document.getElementById('cart-grand-total');
+    const itemsCountEl = document.getElementById('cart-items-count');
+
+    // Get all summary line-item totals
+    function getSummaryLineTotals() {
+        return document.querySelectorAll('.summary-line-item .line-total');
+    }
+
+    // Format a number as USD currency string
+    function formatCurrency(amount) {
+        return '$' + amount.toFixed(2);
+    }
+
+    // Recalculate EVERYTHING — subtotals, summary lines, grand total
+    function recalculateAll() {
+        let grandTotal = 0;
+        let itemCount = 0;
+
+        cartItems.forEach(function(item) {
+            const price = parseFloat(item.dataset.price) || 0;
+            const input = item.querySelector('.qty-input');
+            let qty = parseInt(input.value) || 0;
+            if (qty < 0) qty = 0;
+
+            const subtotal = price * qty;
+            grandTotal += subtotal;
+            if (qty > 0) itemCount += 1;
+
+            // Update the subtotal display for this row
+            const subtotalEl = item.querySelector('.subtotal-value');
+            if (subtotalEl) {
+                subtotalEl.dataset.subtotal = subtotal;
+                subtotalEl.textContent = formatCurrency(subtotal);
+            }
+        });
+
+        // Update summary line item totals
+        const lineTotals = getSummaryLineTotals();
+        cartItems.forEach(function(item, index) {
+            const input = item.querySelector('.qty-input');
+            const qty = parseInt(input.value) || 0;
+            const price = parseFloat(item.dataset.price) || 0;
+            if (lineTotals[index]) {
+                lineTotals[index].textContent = formatCurrency(price * qty);
+            }
+        });
+
+        // Update grand total
+        if (grandTotalEl) {
+            grandTotalEl.textContent = formatCurrency(grandTotal);
+        }
+
+        // Update item count
+        if (itemsCountEl) {
+            itemsCountEl.textContent = itemCount;
+        }
+    }
+
+    // Send updated quantity to server via AJAX
+    function syncQuantityToServer(productId, quantity) {
+        const url = '/update-cart/' + productId + '/' + quantity;
+        // Fire and forget — we already updated the UI optimistically.
+        // The server will persist the change.
+        fetch(url).catch(function(err) {
+            console.warn('Cart sync error:', err);
+        });
+    }
+
+    // Handle quantity input change (manual typing)
+    function onInputChange(e) {
+        const input = e.target;
+        let val = parseInt(input.value) || 0;
+        if (val < 1) val = 1;
+        if (val > 99) val = 99;
+        input.value = val;
+
+        const item = input.closest('.cart-item');
+        const productId = item.dataset.productId;
+        recalculateAll();
+        syncQuantityToServer(productId, val);
+    }
+
+    // Handle +/- button clicks
+    function onButtonClick(e) {
+        const btn = e.currentTarget;
+        const item = btn.closest('.cart-item');
+        const input = item.querySelector('.qty-input');
+        let val = parseInt(input.value) || 0;
+
+        if (btn.dataset.action === 'increase') {
+            val = Math.min(val + 1, 99);
+        } else if (btn.dataset.action === 'decrease') {
+            val = Math.max(val - 1, 1);
+        }
+
+        input.value = val;
+        const productId = item.dataset.productId;
+        recalculateAll();
+        syncQuantityToServer(productId, val);
+    }
+
+    // Bind events to all cart item inputs and buttons
+    cartItems.forEach(function(item) {
+        const input = item.querySelector('.qty-input');
+        const minusBtn = item.querySelector('.qty-minus');
+        const plusBtn = item.querySelector('.qty-plus');
+
+        if (input) {
+            input.addEventListener('input', onInputChange);
+        }
+        if (minusBtn) {
+            minusBtn.addEventListener('click', onButtonClick);
+        }
+        if (plusBtn) {
+            plusBtn.addEventListener('click', onButtonClick);
+        }
+    });
+})();
+</script>
+{% endblock %}

@@ -13,7 +13,7 @@ from flask import (
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from config import Config
-from models import db, Product
+from models import db, Product, Order, OrderItem
 import os
 
 from werkzeug.utils import secure_filename
@@ -261,6 +261,137 @@ def logout():
 @login_required
 def dashboard():
     return render_template("dashboard.html")
+
+
+@app.route("/shop")
+def shop():
+    products = Product.query.all()
+    return render_template("shop.html", products=products)
+
+
+@app.route("/cart")
+def view_cart():
+    cart = session.get("cart", {})
+    cart_items = []
+    total = 0.0
+    for product_id, item in cart.items():
+        product = Product.query.get(int(product_id))
+        if product:
+            subtotal = product.price * item["quantity"]
+            total += subtotal
+            cart_items.append({
+                "product": product,
+                "quantity": item["quantity"],
+                "subtotal": subtotal
+            })
+    return render_template("cart.html", cart_items=cart_items, total=total)
+
+
+@app.route("/add-to-cart/<int:product_id>")
+def add_to_cart(product_id):
+    product = Product.query.get_or_404(product_id)
+    cart = session.get("cart", {})
+    key = str(product_id)
+    if key in cart:
+        cart[key]["quantity"] += 1
+    else:
+        cart[key] = {"quantity": 1}
+    session["cart"] = cart
+    flash(f'"{product.name}" added to cart.', "success")
+    return redirect(request.referrer or url_for("shop"))
+
+
+@app.route("/update-cart/<int:product_id>/<int:quantity>")
+def update_cart(product_id, quantity):
+    cart = session.get("cart", {})
+    key = str(product_id)
+    if quantity > 0:
+        cart[key] = {"quantity": quantity}
+    else:
+        cart.pop(key, None)
+    session["cart"] = cart
+    return redirect(url_for("view_cart"))
+
+
+@app.route("/remove-from-cart/<int:product_id>")
+def remove_from_cart(product_id):
+    cart = session.get("cart", {})
+    cart.pop(str(product_id), None)
+    session["cart"] = cart
+    flash("Item removed from cart.", "info")
+    return redirect(url_for("view_cart"))
+
+
+# =========================
+# CHECKOUT / ORDER ROUTES
+# =========================
+@app.route("/checkout", methods=["GET", "POST"])
+def checkout():
+    cart = session.get("cart", {})
+    if not cart:
+        flash("Your cart is empty.", "warning")
+        return redirect(url_for("view_cart"))
+
+    cart_items = []
+    total = 0.0
+    for product_id, item in cart.items():
+        product = Product.query.get(int(product_id))
+        if product:
+            subtotal = product.price * item["quantity"]
+            total += subtotal
+            cart_items.append({
+                "product": product,
+                "quantity": item["quantity"],
+                "subtotal": subtotal
+            })
+
+    if request.method == "POST":
+        fullname = request.form.get("fullname", "").strip()
+        address = request.form.get("address", "").strip()
+        phone = request.form.get("phone", "").strip()
+
+        if not fullname or not address or not phone:
+            flash("Please fill in all required fields.", "danger")
+            return render_template("checkout.html", cart_items=cart_items, total=total)
+
+        # Create the order
+        order = Order(
+            user_id=g.user.id if g.user else None,
+            fullname=fullname,
+            address=address,
+            phone=phone,
+            total_amount=total,
+            status="pending"
+        )
+        db.session.add(order)
+        db.session.flush()  # get order.id
+
+        # Create order items
+        for ci in cart_items:
+            item = OrderItem(
+                order_id=order.id,
+                product_id=ci["product"].id,
+                product_name=ci["product"].name,
+                quantity=ci["quantity"],
+                price=ci["product"].price
+            )
+            db.session.add(item)
+
+        db.session.commit()
+
+        # Clear the cart
+        session.pop("cart", None)
+
+        flash("Order placed successfully!", "success")
+        return redirect(url_for("order_confirmation", order_id=order.id))
+
+    return render_template("checkout.html", cart_items=cart_items, total=total)
+
+
+@app.route("/order-confirmation/<int:order_id>")
+def order_confirmation(order_id):
+    order = Order.query.get_or_404(order_id)
+    return render_template("order_confirmation.html", order=order)
 
 
 @app.route("/admin")
