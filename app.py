@@ -13,7 +13,7 @@ from flask import (
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from config import Config
-from models import db, Product
+from models import db, Product, Order, OrderItem
 import os
 
 from werkzeug.utils import secure_filename
@@ -320,6 +320,78 @@ def remove_from_cart(product_id):
     session["cart"] = cart
     flash("Item removed from cart.", "info")
     return redirect(url_for("view_cart"))
+
+
+# =========================
+# CHECKOUT / ORDER ROUTES
+# =========================
+@app.route("/checkout", methods=["GET", "POST"])
+def checkout():
+    cart = session.get("cart", {})
+    if not cart:
+        flash("Your cart is empty.", "warning")
+        return redirect(url_for("view_cart"))
+
+    cart_items = []
+    total = 0.0
+    for product_id, item in cart.items():
+        product = Product.query.get(int(product_id))
+        if product:
+            subtotal = product.price * item["quantity"]
+            total += subtotal
+            cart_items.append({
+                "product": product,
+                "quantity": item["quantity"],
+                "subtotal": subtotal
+            })
+
+    if request.method == "POST":
+        fullname = request.form.get("fullname", "").strip()
+        address = request.form.get("address", "").strip()
+        phone = request.form.get("phone", "").strip()
+
+        if not fullname or not address or not phone:
+            flash("Please fill in all required fields.", "danger")
+            return render_template("checkout.html", cart_items=cart_items, total=total)
+
+        # Create the order
+        order = Order(
+            user_id=g.user.id if g.user else None,
+            fullname=fullname,
+            address=address,
+            phone=phone,
+            total_amount=total,
+            status="pending"
+        )
+        db.session.add(order)
+        db.session.flush()  # get order.id
+
+        # Create order items
+        for ci in cart_items:
+            item = OrderItem(
+                order_id=order.id,
+                product_id=ci["product"].id,
+                product_name=ci["product"].name,
+                quantity=ci["quantity"],
+                price=ci["product"].price
+            )
+            db.session.add(item)
+
+        db.session.commit()
+
+        # Clear the cart
+        session.pop("cart", None)
+
+        flash("Order placed successfully!", "success")
+        return redirect(url_for("order_confirmation", order_id=order.id))
+
+    return render_template("checkout.html", cart_items=cart_items, total=total)
+
+
+@app.route("/order-confirmation/<int:order_id>")
+def order_confirmation(order_id):
+    order = Order.query.get_or_404(order_id)
+    return render_template("order_confirmation.html", order=order)
 
 
 @app.route("/admin")
