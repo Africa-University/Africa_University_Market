@@ -62,7 +62,7 @@
                     <span>Total</span>
                     <span id="cart-grand-total">${{ "%.2f"|format(total) }}</span>
                 </div>
-                <button class="btn btn-primary btn-block btn-checkout">Proceed to Checkout</button>
+                <a href="{{ url_for('checkout') }}" class="btn btn-primary btn-block btn-checkout">Proceed to Checkout</a>
                 <a href="{{ url_for('shop') }}" class="btn btn-outline btn-block" style="margin-top: 0.5rem;">Continue Shopping</a>
             </div>
         </div>
