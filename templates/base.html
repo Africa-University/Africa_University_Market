@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{% block meta_description %}Africa University Market - Fresh, high-quality agricultural products directly from the Africa University Farm.{% endblock %}">
     <title>{% block title %}Africa University Market{% endblock %}</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,6 +22,41 @@
             <li><a href="{{ url_for('home') }}" class="nav-link">Home</a></li>
             <li><a href="{{ url_for('products') }}" class="nav-link">Shop</a></li>
             <li><a href="#" class="nav-link">Categories</a></li>
+            <li class="nav-cart-wrapper">
+                <a href="{{ url_for('cart') }}" class="nav-link" style="display: flex; align-items: center;">Cart 
+                    {% if global_cart and global_cart|length > 0 %}
+                    <span style="background: #2e7d32; color: white; padding: 0.1rem 0.5rem; border-radius: 50%; font-size: 0.8rem; margin-left: 0.4rem;">{{ global_cart|length }}</span>
+                    {% endif %}
+                </a>
+                
+                <!-- Mini-Cart Dropdown -->
+                <div class="mini-cart-dropdown">
+                    {% if global_cart and global_cart|length > 0 %}
+                        <div class="mini-cart-items">
+                            {% for item in global_cart %}
+                            <div class="mini-cart-item">
+                                <div class="mini-cart-item-info">
+                                    <span class="mini-cart-item-name">{{ item.name }}</span>
+                                    <span class="mini-cart-item-qty">x{{ item.quantity }}</span>
+                                </div>
+                                <span class="mini-cart-item-price">${{ "%.2f"|format(item.price * item.quantity) }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="mini-cart-footer">
+                            <div class="mini-cart-total">
+                                <span>Total:</span>
+                                <span>${{ "%.2f"|format(global_cart_total) }}</span>
+                            </div>
+                            <a href="{{ url_for('cart') }}" class="btn btn-primary btn-block" style="padding: 0.5rem; font-size: 0.9rem;">View Cart</a>
+                        </div>
+                    {% else %}
+                        <div style="padding: 1.5rem; text-align: center; color: var(--text-secondary);">
+                            Your cart is empty.
+                        </div>
+                    {% endif %}
+                </div>
+            </li>
             {% if g.user %}
                 <li><a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a></li>
                 {% if g.user.role == 'admin' %}

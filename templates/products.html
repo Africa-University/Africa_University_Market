@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}Shop - Africa University Market{% endblock %}
+{% block meta_description %}Browse the Africa University Market catalog for fresh vegetables, fruits, dairy, and poultry.{% endblock %}
 
 {% block content %}
 <section class="container" style="margin-top: 2rem;">
@@ -23,16 +24,20 @@
                 <div class="product-details">
                     <h3 class="product-title">{{ product.name }}</h3>
                     <p class="product-description">{{ product.description }}</p>
-                    <div class="product-price">${{ "%.2f"|format(product.price) }} {% if product.stock > 0 %}<small style="font-size: 0.8rem; color: #666; font-weight: normal;">({{ product.stock }} in stock)</small>{% endif %}</div>
+                    <div class="product-price">${{ "%.2f"|format(product.price) }} {% if product.stock > 0 %}<small style="font-size: 0.8rem; color: var(--text-secondary); font-weight: normal;">({{ product.stock }} in stock)</small>{% endif %}</div>
             </a>
             <div class="product-actions" style="margin-top: auto; padding-top: 1rem;">
-                <button class="btn btn-primary btn-block">Add to Cart</button>
+                <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST">
+                    <input type="hidden" name="quantity" value="1">
+                    <input type="hidden" name="next" value="{{ url_for('products') }}">
+                    <button type="submit" class="btn btn-primary btn-block">Add to Cart</button>
+                </form>
             </div>
                 </div>
         </div>
         {% else %}
-        <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; background: #f9f9f9; border-radius: 8px;">
-            <p style="color: #666; font-size: 1.1rem;">No products available at the moment. Please check back later.</p>
+        <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; background: var(--surface-color); border-radius: var(--radius); box-shadow: var(--shadow-sm);">
+            <p style="color: var(--text-secondary); font-size: 1.1rem;">No products available at the moment. Please check back later.</p>
         </div>
         {% endfor %}
     </div>

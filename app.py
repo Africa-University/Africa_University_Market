@@ -155,6 +155,34 @@ app.config["UPLOAD_FOLDER"] = os.path.join(
 )
 
 
+def get_cart_items():
+    cart_entries = session.get("cart", [])
+    items = []
+
+    for entry in cart_entries:
+        product = Product.query.get(entry.get("product_id"))
+        if product is None:
+            continue
+
+        items.append({
+            "id": product.id,
+            "product_id": product.id,
+            "name": product.name,
+            "price": float(product.price),
+            "quantity": entry.get("quantity", 1),
+            "image": product.image,
+            "stock": product.stock,
+        })
+
+    return items
+
+
+@app.context_processor
+def inject_cart():
+    cart_items = get_cart_items()
+    cart_total = sum(item["price"] * item["quantity"] for item in cart_items)
+    return dict(global_cart=cart_items, global_cart_total=cart_total)
+
 # =========================
 # ROUTES
 # =========================
@@ -171,6 +199,84 @@ def products():
 def product_detail(product_id):
     product = Product.query.get_or_404(product_id)
     return render_template("product_detail.html", product=product)
+
+@app.route("/cart")
+def cart():
+    return render_template("cart.html", cart=get_cart_items())
+
+
+@app.route("/cart/add/<int:product_id>", methods=["POST"])
+def add_to_cart(product_id):
+    product = Product.query.get_or_404(product_id)
+
+    if product.stock <= 0:
+        flash("This product is currently out of stock.", "warning")
+        return redirect(request.form.get("next") or url_for("products"))
+
+    quantity = int(request.form.get("quantity", 1) or 1)
+    quantity = max(1, quantity)
+
+    if product.stock > 0 and quantity > product.stock:
+        quantity = product.stock
+
+    cart = session.get("cart", [])
+    found = False
+
+    for item in cart:
+        if item.get("product_id") == product_id:
+            item["quantity"] += quantity
+            if product.stock > 0 and item["quantity"] > product.stock:
+                item["quantity"] = product.stock
+            found = True
+            break
+
+    if not found:
+        cart.append({"product_id": product_id, "quantity": quantity})
+
+    session["cart"] = cart
+    flash(f"{product.name} added to your cart.", "success")
+    return redirect(request.form.get("next") or url_for("cart"))
+
+
+@app.route("/cart/update/<int:product_id>", methods=["POST"])
+def update_cart(product_id):
+    delta = int(request.form.get("delta", 0) or 0)
+    cart = session.get("cart", [])
+    updated_cart = []
+
+    for item in cart:
+        if item.get("product_id") != product_id:
+            updated_cart.append(item)
+            continue
+
+        new_quantity = item.get("quantity", 1) + delta
+        if new_quantity > 0:
+            product = Product.query.get(product_id)
+            if product is not None and product.stock > 0 and new_quantity > product.stock:
+                new_quantity = product.stock
+            updated_cart.append({"product_id": product_id, "quantity": new_quantity})
+
+    session["cart"] = updated_cart
+    return redirect(url_for("cart"))
+
+
+@app.route("/cart/remove/<int:product_id>", methods=["POST"])
+def remove_from_cart(product_id):
+    cart = session.get("cart", [])
+    session["cart"] = [item for item in cart if item.get("product_id") != product_id]
+    flash("Item removed from your cart.", "info")
+    return redirect(url_for("cart"))
+
+
+@app.route("/checkout", methods=["POST"])
+def checkout():
+    if not session.get("cart"):
+        flash("Your cart is empty.", "warning")
+        return redirect(url_for("cart"))
+
+    session["cart"] = []
+    flash("Checkout completed successfully. Thank you!", "success")
+    return redirect(url_for("home"))
 
 
 @app.route("/register", methods=["GET", "POST"])
