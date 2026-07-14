@@ -47,7 +47,8 @@
             </div>
             
             <!-- Quantity and Add to Cart -->
-            <form action="#" method="POST" style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+            <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST" style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+                <input type="hidden" name="next" value="{{ url_for('product_detail', product_id=product.id) }}">
                 <input type="number" name="quantity" value="1" min="1" max="{{ product.stock if product.stock > 0 else 1 }}" 
                     style="width: 80px; padding: 0.8rem; border: 1px solid var(--border-color); border-radius: var(--radius); font-size: 1.1rem; text-align: center;" 
                     {% if product.stock <= 0 %}disabled{% endif %}>
