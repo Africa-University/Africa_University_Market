@@ -45,12 +45,16 @@ main {
   position: sticky;
   top: 0;
   z-index: 1000;
-  transition: padding 0.4s ease, background-color 0.4s ease, box-shadow 0.4s ease;
+  min-height: 110px;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: background-color, box-shadow;
+  transition: padding 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .navbar.navbar-scrolled {
-  padding: 0.4rem 5%;
-  background-color: rgba(204, 0, 0, 0.95); /* Slightly transparent */
+  padding: 0.75rem 5%;
+  background-color: rgba(204, 0, 0, 0.96);
   backdrop-filter: blur(10px);
   box-shadow: var(--shadow-md);
 }
@@ -61,13 +65,10 @@ main {
 }
 
 .navbar-brand img {
-  height: 120px;
+  height: 84px;
+  width: auto;
   border-radius: var(--radius);
-  transition: height 0.4s ease;
-}
-
-.navbar.navbar-scrolled .navbar-brand img {
-  height: 60px;
+  object-fit: contain;
 }
 
 .navbar-nav {
@@ -113,6 +114,17 @@ main {
   box-shadow: var(--shadow-md);
 }
 
+.btn-secondary {
+  background-color: #111111;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #333333;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
 .btn-outline {
   background-color: #ffffff;
   color: var(--secondary-color);
@@ -138,6 +150,27 @@ main {
   background: var(--surface-color);
   border-radius: var(--radius);
   box-shadow: var(--shadow-lg);
+}
+
+.password-input-wrapper {
+  position: relative;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.8rem;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: var(--primary-color);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.password-toggle:hover {
+  color: var(--primary-hover);
 }
 
 .form-title {
@@ -224,6 +257,139 @@ main {
 
 .form-footer a:hover {
   text-decoration: underline;
+}
+
+/* Dashboard */
+.dashboard-shell {
+  max-width: 1100px;
+  margin: 3rem auto 4rem;
+  padding: 0 1rem;
+}
+
+.dashboard-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, #cc0000, #7a0000);
+  color: white;
+  border-radius: 20px;
+  box-shadow: 0 16px 40px rgba(204, 0, 0, 0.18);
+  margin-bottom: 1.5rem;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.2rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  opacity: 0.8;
+  margin-bottom: 0.4rem;
+}
+
+.dashboard-hero h2 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.hero-copy {
+  max-width: 640px;
+  opacity: 0.95;
+}
+
+.hero-badge {
+  background: rgba(255, 255, 255, 0.16);
+  padding: 1rem 1.25rem;
+  border-radius: 14px;
+  min-width: 180px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.hero-badge-label {
+  display: block;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14rem;
+  opacity: 0.8;
+  margin-bottom: 0.3rem;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-card {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  background: white;
+  border-radius: 16px;
+  padding: 1.25rem;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f1f1f1;
+}
+
+.dashboard-card-accent {
+  border-top: 4px solid #cc0000;
+}
+
+.card-icon {
+  font-size: 1.4rem;
+  background: #fff1f1;
+  color: #cc0000;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.dashboard-card h3 {
+  margin: 0 0 0.3rem;
+  color: #111;
+}
+
+.dashboard-card p {
+  margin: 0;
+  color: #666;
+}
+
+.dashboard-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.action-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.9rem 1.2rem;
+  border-radius: 999px;
+  background: #cc0000;
+  color: white;
+  text-decoration: none;
+  font-weight: 700;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.action-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(204, 0, 0, 0.18);
+}
+
+.action-link-secondary {
+  background: #111;
+}
+
+.action-link-admin {
+  background: linear-gradient(135deg, #000, #333);
 }
 
 /* Products Layout */

@@ -24,7 +24,7 @@
                 <div class="product-details">
                     <h3 class="product-title">{{ product.name }}</h3>
                     <p class="product-description">{{ product.description }}</p>
-                    <div class="product-price">${{ "%.2f"|format(product.price) }} {% if product.stock > 0 %}<small style="font-size: 0.8rem; color: var(--text-secondary); font-weight: normal;">({{ product.stock }} in stock)</small>{% endif %}</div>
+                    <div class="product-price">{{ currency_info.symbol }}{{ "%.2f"|format(product.price) }} {% if product.stock > 0 %}<small style="font-size: 0.8rem; color: var(--text-secondary); font-weight: normal;">({{ product.stock }} in stock)</small>{% endif %}</div>
             </a>
             <div class="product-actions" style="margin-top: auto; padding-top: 1rem;">
                 <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST">

@@ -43,18 +43,19 @@
                     <div style="font-weight: 600;">{{ item.name }}</div>
                     <div style="font-size: 0.9rem; color: var(--text-secondary);">Qty: {{ item.quantity }}</div>
                 </div>
-                <div style="font-weight: 600;">${{ "%.2f"|format(item.subtotal) }}</div>
+                <div style="font-weight: 600;">{{ currency_info.symbol }}{{ "%.2f"|format(item.subtotal) }}</div>
             </div>
             {% endfor %}
         </div>
 
         <div style="display: flex; justify-content: space-between; align-items: center; font-size: 1.1rem; font-weight: 700;">
             <span>Total paid</span>
-            <span>${{ "%.2f"|format(receipt.total) }}</span>
+            <span>{{ currency_info.symbol }}{{ "%.2f"|format(receipt.total) }}</span>
         </div>
 
         <div style="margin-top: 1.8rem; display: flex; gap: 1rem; flex-wrap: wrap;">
             <a href="{{ url_for('products') }}" class="btn btn-primary">Buy more</a>
+            <a href="{{ url_for('download_receipt') }}" class="btn btn-secondary">Download PDF</a>
             <a href="{{ url_for('home') }}" class="btn btn-secondary">Back home</a>
         </div>
     </div>

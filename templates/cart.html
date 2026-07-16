@@ -35,7 +35,7 @@
                                     {% endif %}
                                     <span>{{ item.name }}</span>
                                 </td>
-                                <td>${{ "%.2f"|format(item.price) }}</td>
+                                <td>{{ currency_info.symbol }}{{ "%.2f"|format(item.price) }}</td>
                                 <td style="text-align: center;">
                                     <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
                                         <form action="{{ url_for('update_cart', product_id=item.product_id) }}" method="POST" style="display: inline;">
@@ -50,7 +50,7 @@
                                     </div>
                                 </td>
                                 <td style="text-align: right; font-weight: 500;">
-                                    ${{ "%.2f"|format(subtotal) }}
+                                    {{ currency_info.symbol }}{{ "%.2f"|format(subtotal) }}
                                 </td>
                                 <td style="text-align: right;">
                                     <form action="{{ url_for('remove_from_cart', product_id=item.product_id) }}" method="POST" style="display: inline;">
@@ -79,17 +79,17 @@
             
             <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; color: var(--text-secondary);">
                 <span>Subtotal ({{ cart|length }} items)</span>
-                <span>${{ "%.2f"|format(total.value) }}</span>
+                <span>{{ currency_info.symbol }}{{ "%.2f"|format(total.value) }}</span>
             </div>
             
             <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem; color: var(--text-secondary);">
                 <span>Estimated Tax</span>
-                <span>$0.00</span>
+                <span>{{ currency_info.symbol }}0.00</span>
             </div>
             
             <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--border-color); padding-top: 1.5rem; margin-bottom: 1.5rem; font-weight: 700; font-size: 1.2rem; color: var(--text-primary);">
                 <span>Total</span>
-                <span>${{ "%.2f"|format(total.value) }}</span>
+                <span>{{ currency_info.symbol }}{{ "%.2f"|format(total.value) }}</span>
             </div>
             
             <form action="{{ url_for('checkout') }}" method="POST">

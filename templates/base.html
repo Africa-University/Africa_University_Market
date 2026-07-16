@@ -39,14 +39,14 @@
                                     <span class="mini-cart-item-name">{{ item.name }}</span>
                                     <span class="mini-cart-item-qty">x{{ item.quantity }}</span>
                                 </div>
-                                <span class="mini-cart-item-price">${{ "%.2f"|format(item.price * item.quantity) }}</span>
+                                <span class="mini-cart-item-price">{{ currency_info.symbol }}{{ "%.2f"|format(item.price * item.quantity) }}</span>
                             </div>
                             {% endfor %}
                         </div>
                         <div class="mini-cart-footer">
                             <div class="mini-cart-total">
                                 <span>Total:</span>
-                                <span>${{ "%.2f"|format(global_cart_total) }}</span>
+                                <span>{{ currency_info.symbol }}{{ "%.2f"|format(global_cart_total) }}</span>
                             </div>
                             <a href="{{ url_for('cart') }}" class="btn btn-primary btn-block" style="padding: 0.5rem; font-size: 0.9rem;">View Cart</a>
                         </div>
@@ -95,14 +95,24 @@
 
     <!-- Interactive Navbar Script -->
     <script>
+        let ticking = false;
+        const navbar = document.querySelector('.navbar');
+
+        function updateNavbarState() {
+            if (!navbar) return;
+            const shouldScroll = window.scrollY > 50;
+            navbar.classList.toggle('navbar-scrolled', shouldScroll);
+            ticking = false;
+        }
+
         window.addEventListener('scroll', function() {
-            const navbar = document.querySelector('.navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('navbar-scrolled');
-            } else {
-                navbar.classList.remove('navbar-scrolled');
+            if (!ticking) {
+                window.requestAnimationFrame(updateNavbarState);
+                ticking = true;
             }
         });
+
+        updateNavbarState();
 
         // Auto-hide alert messages after 5 seconds
         setTimeout(function() {
@@ -117,5 +127,6 @@
             }
         }, 5000);
     </script>
+    {% block scripts %}{% endblock %}
 </body>
 </html>
