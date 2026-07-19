@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{% block meta_description %}Africa University Market - Fresh, high-quality agricultural products directly from the Africa University Farm.{% endblock %}">
+    <title>{% block title %}Africa University Market{% endblock %}</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="{{ url_for('home') }}" class="navbar-brand">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Africa University Logo">
+        </a>
+        <ul class="navbar-nav">
+            <li><a href="{{ url_for('home') }}" class="nav-link">Home</a></li>
+            <li><a href="{{ url_for('products') }}" class="nav-link">Shop</a></li>
+            <li><a href="{{ url_for('contact') }}" class="nav-link">Contact</a></li>
+            <li><a href="#" class="nav-link">Categories</a></li>
+            <li class="nav-cart-wrapper">
+                <a href="{{ url_for('cart') }}" class="nav-link" style="display: flex; align-items: center;">Cart 
+                    {% if global_cart and global_cart|length > 0 %}
+                    <span style="background: #2e7d32; color: white; padding: 0.1rem 0.5rem; border-radius: 50%; font-size: 0.8rem; margin-left: 0.4rem;">{{ global_cart|length }}</span>
+                    {% endif %}
+                </a>
+                
+                <!-- Mini-Cart Dropdown -->
+                <div class="mini-cart-dropdown">
+                    {% if global_cart and global_cart|length > 0 %}
+                        <div class="mini-cart-items">
+                            {% for item in global_cart %}
+                            <div class="mini-cart-item">
+                                <div class="mini-cart-item-info">
+                                    <span class="mini-cart-item-name">{{ item.name }}</span>
+                                    <span class="mini-cart-item-qty">x{{ item.quantity }}</span>
+                                </div>
+                                <span class="mini-cart-item-price">{{ currency_info.symbol }}{{ "%.2f"|format(item.price * item.quantity) }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="mini-cart-footer">
+                            <div class="mini-cart-total">
+                                <span>Total:</span>
+                                <span>{{ currency_info.symbol }}{{ "%.2f"|format(global_cart_total) }}</span>
+                            </div>
+                            <a href="{{ url_for('cart') }}" class="btn btn-primary btn-block" style="padding: 0.5rem; font-size: 0.9rem;">View Cart</a>
+                        </div>
+                    {% else %}
+                        <div style="padding: 1.5rem; text-align: center; color: var(--text-secondary);">
+                            Your cart is empty.
+                        </div>
+                    {% endif %}
+                </div>
+            </li>
+            {% if g.user %}
+                <li><a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a></li>
+                {% if g.user.role == 'admin' %}
+                    <li><a href="{{ url_for('admin') }}" class="nav-link">Admin</a></li>
+                {% endif %}
+                <li><a href="{{ url_for('logout') }}" class="nav-link">Logout</a></li>
+            {% else %}
+                <li><a href="{{ url_for('login') }}" class="nav-link">Login</a></li>
+                <li><a href="{{ url_for('admin_login') }}" class="nav-link">Admin Login</a></li>
+                <li><a href="{{ url_for('register') }}" class="btn btn-primary">Sign Up</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div id="flash-alerts-container" class="container" style="margin-top: 2rem; margin-bottom: -2rem; transition: all 0.5s ease;">
+                    <div class="form-alerts">
+                        {% for category, message in messages %}
+                            <div class="form-alert form-alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Africa University Agricultural Products. All rights reserved.</p>
+        <p>Providing fresh, local produce directly from our farms to your table.</p>
+    </footer>
+
+    <!-- Interactive Navbar Script -->
+    <script>
+        let ticking = false;
+        const navbar = document.querySelector('.navbar');
+
+        function updateNavbarState() {
+            if (!navbar) return;
+            const shouldScroll = window.scrollY > 50;
+            navbar.classList.toggle('navbar-scrolled', shouldScroll);
+            ticking = false;
+        }
+
+        window.addEventListener('scroll', function() {
+            if (!ticking) {
+                window.requestAnimationFrame(updateNavbarState);
+                ticking = true;
+            }
+        });
+
+        updateNavbarState();
+
+        // Auto-hide alert messages after 5 seconds
+        setTimeout(function() {
+            const container = document.getElementById('flash-alerts-container');
+            if (container) {
+                container.style.opacity = '0';
+                container.style.marginTop = '0';
+                container.style.marginBottom = '0';
+                setTimeout(function() {
+                    container.style.display = 'none';
+                }, 500);
+            }
+        }, 5000);
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

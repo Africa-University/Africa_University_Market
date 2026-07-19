@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Africa University Market{% endblock %}
+
+{% block content %}
+<div class="dashboard-shell">
+    <section class="dashboard-hero">
+        <div>
+            <p class="eyebrow">Your account overview</p>
+            <h2>Welcome back, {{ g.user.fullname }}!</h2>
+            <p class="hero-copy">Manage your account, review your preferences, and jump into the marketplace from one polished place.</p>
+        </div>
+        <div class="hero-badge">
+            <span class="hero-badge-label">Current currency</span>
+            <strong>{{ currency_info.symbol }} {{ currency_info.code }}</strong>
+        </div>
+    </section>
+
+    <section class="dashboard-grid">
+        <article class="dashboard-card dashboard-card-accent">
+            <div class="card-icon">👤</div>
+            <div>
+                <h3>Your Role</h3>
+                <p>{{ g.user.role|capitalize }}</p>
+            </div>
+        </article>
+
+        <article class="dashboard-card">
+            <div class="card-icon">✉️</div>
+            <div>
+                <h3>Account Email</h3>
+                <p>{{ g.user.email }}</p>
+            </div>
+        </article>
+
+        <article class="dashboard-card">
+            <div class="card-icon">🛍️</div>
+            <div>
+                <h3>Marketplace</h3>
+                <p>Browse fresh products and keep shopping with ease.</p>
+            </div>
+        </article>
+    </section>
+
+    <section class="dashboard-actions">
+        <a href="{{ url_for('products') }}" class="action-link">Browse Products</a>
+        <a href="{{ url_for('cart') }}" class="action-link action-link-secondary">View Cart</a>
+        {% if g.user.role == 'admin' %}
+        <a href="{{ url_for('admin') }}" class="action-link action-link-admin">Open Admin Panel</a>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

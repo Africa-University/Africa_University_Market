@@ -1,0 +1,492 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Africa University Market{% endblock %}
+
+{% block content %}
+<div class="admin-dashboard">
+    <!-- Header Section -->
+    <div class="admin-header">
+        <div class="header-content">
+            <h1 class="admin-title">Admin Dashboard</h1>
+            <p class="admin-subtitle">Manage your products and site content</p>
+        </div>
+        <div class="header-user">
+            <div class="user-info">
+                <p class="user-name">{{ g.user.fullname }}</p>
+                <p class="user-email">{{ g.user.email }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3 class="stat-label">Total Products</h3>
+            <p class="stat-value">{{ products|length }}</p>
+        </div>
+        <div class="stat-card">
+            <h3 class="stat-label">Pending Orders</h3>
+            <p class="stat-value">{{ pending_orders }}</p>
+        </div>
+        <div class="stat-card">
+            <h3 class="stat-label">Completed Orders</h3>
+            <p class="stat-value">{{ completed_orders }}</p>
+        </div>
+    </div>
+
+    <div class="orders-section">
+        <div class="section-header">
+            <div>
+                <h2>Currency Settings</h2>
+                <p>Choose the default currency shown across the storefront</p>
+            </div>
+        </div>
+
+        <div class="currency-panel">
+            <form method="get" action="{{ url_for('set_currency', currency_code='ZAR') }}" class="currency-form">
+                <label for="currency" class="form-label">Default storefront currency</label>
+                <select id="currency" name="currency" class="status-select" onchange="this.form.action='{{ url_for('set_currency', currency_code='') }}' + this.value; this.form.submit();">
+                    <option value="ZAR" {% if selected_currency == 'ZAR' %}selected{% endif %}>R ZAR</option>
+                    <option value="USD" {% if selected_currency == 'USD' %}selected{% endif %}>$ USD</option>
+                    <option value="EUR" {% if selected_currency == 'EUR' %}selected{% endif %}>€ EUR</option>
+                </select>
+            </form>
+            <p class="currency-note">Only admins can change this setting. It updates the storefront pricing immediately.</p>
+        </div>
+    </div>
+
+    <div class="orders-section">
+        <div class="section-header">
+            <div>
+                <h2>Order Management</h2>
+                <p>Track customer purchases and keep fulfillment moving smoothly</p>
+            </div>
+        </div>
+
+        {% if orders %}
+        <div class="orders-table-container">
+            <table class="products-table orders-table">
+                <thead>
+                    <tr>
+                        <th>Order</th>
+                        <th>Customer</th>
+                        <th>Items</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Updated</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr class="product-row">
+                        <td>
+                            <div class="order-main">
+                                <strong>#{{ order.order_number }}</strong>
+                                <span>{{ order.created_at.strftime('%b %d, %Y') }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="order-main">
+                                <strong>{{ order.customer_name }}</strong>
+                                <span>{{ order.customer_email }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="order-main">
+                                <strong>{{ order.items|length }} item{% if order.items|length != 1 %}s{% endif %}</strong>
+                                <span>{{ order.items[0].product_name if order.items else 'No items' }}</span>
+                            </div>
+                        </td>
+                        <td class="product-price">{{ currency_info.symbol }}{{ '%.2f'|format(order.total) }}</td>
+                        <td>
+                            <form method="post" action="{{ url_for('update_order_status', order_id=order.id) }}" class="status-form">
+                                <select name="status" class="status-select" onchange="this.form.submit()">
+                                    <option value="Pending" {% if order.status == 'Pending' %}selected{% endif %}>Pending</option>
+                                    <option value="Processing" {% if order.status == 'Processing' %}selected{% endif %}>Processing</option>
+                                    <option value="Completed" {% if order.status == 'Completed' %}selected{% endif %}>Completed</option>
+                                    <option value="Cancelled" {% if order.status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+                                </select>
+                            </form>
+                        </td>
+                        <td>
+                            <div class="order-main">
+                                <strong>{{ order.updated_at.strftime('%b %d') }}</strong>
+                                <span>{{ order.updated_at.strftime('%I:%M %p') }}</span>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">🧾</div>
+            <h3>No Orders Yet</h3>
+            <p>New customer orders will appear here as soon as checkout is completed.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Products Section -->
+    <div class="products-section">
+        <div class="section-header">
+            <div>
+                <h2>Products Management</h2>
+                <p>{{ products|length }} product(s) available</p>
+            </div>
+            <a href="{{ url_for('add_product') }}" class="btn-add-product">
+                <span class="plus-icon">+</span>
+                <span>Add New Product</span>
+            </a>
+        </div>
+
+        {% if products %}
+        <div class="products-table-container">
+            <table class="products-table">
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr class="product-row">
+                        <td class="product-name">
+                            <span class="product-icon">📦</span>
+                            {{ product.name }}
+                        </td>
+                        <td class="product-category">{{ product.category.name }}</td>
+                        <td class="product-price">{{ currency_info.symbol }}{{ '%.2f'|format(product.price) }}</td>
+                        <td class="product-stock">
+                            <span class="stock-badge">{{ product.stock }}</span>
+                        </td>
+                        <td class="product-actions">
+                            <a href="{{ url_for('edit_product', product_id=product.id) }}" class="btn-action btn-edit" title="Edit product">
+                                <span>✎</span> Edit
+                            </a>
+                            <form method="post" action="{{ url_for('delete_product', product_id=product.id) }}" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this product?');">
+                                <button type="submit" class="btn-action btn-delete" title="Delete product">
+                                    <span>🗑</span> Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <h3>No Products Yet</h3>
+            <p>Start by adding your first product to the marketplace</p>
+            <a href="{{ url_for('add_product') }}" class="btn-add-product">
+                <span class="plus-icon">+</span>
+                <span>Add Your First Product</span>
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.admin-dashboard {
+    padding: 2rem 5%;
+    background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+    min-height: calc(100vh - 200px);
+}
+
+/* Header */
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3rem;
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.header-content h1 {
+    margin: 0;
+    color: #cc0000;
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+.admin-subtitle {
+    margin: 0.5rem 0 0 0;
+    color: #666;
+    font-size: 1rem;
+}
+
+.header-user {
+    text-align: right;
+}
+
+.user-name {
+    margin: 0;
+    font-weight: 600;
+    color: #000;
+    font-size: 1.1rem;
+}
+
+.user-email {
+    margin: 0.25rem 0 0 0;
+    color: #888;
+    font-size: 0.9rem;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border-left: 4px solid #cc0000;
+}
+
+.stat-label {
+    margin: 0;
+    color: #888;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.stat-value {
+    margin: 0.5rem 0 0 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #cc0000;
+}
+
+/* Currency Panel */
+.currency-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+    background: #fafafa;
+    border: 1px solid #ececec;
+    border-radius: 8px;
+    margin-top: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.currency-form {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.currency-note {
+    margin: 0;
+    color: #666;
+    font-size: 0.95rem;
+}
+
+/* Orders Section */
+.orders-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    margin-bottom: 2rem;
+}
+
+.order-main {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.order-main span {
+    color: #888;
+    font-size: 0.85rem;
+}
+
+.status-form {
+    display: inline-block;
+}
+
+.status-select {
+    padding: 0.6rem 0.8rem;
+    border-radius: 6px;
+    border: 1px solid #d9d9d9;
+    background: #f8f8f8;
+    color: #222;
+    font-weight: 600;
+}
+
+/* Products Section */
+.products-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.section-header h2 {
+    margin: 0;
+    color: #000;
+    font-size: 1.8rem;
+}
+
+.section-header p {
+    margin: 0.5rem 0 0 0;
+    color: #888;
+    font-size: 0.9rem;
+}
+
+/* Add Product Button */
+.btn-add-product {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.85rem 1.75rem;
+    background: linear-gradient(135deg, #cc0000 0%, #990000 100%);
+    color: white;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.btn-add-product:hover {
+    opacity: 0.95;
+}
+
+.products-table-container {
+    overflow-x: auto;
+}
+
+.products-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+.products-table th,
+.products-table td {
+    padding: 1rem 1.25rem;
+    text-align: left;
+}
+
+.products-table thead {
+    background: #f8f8f8;
+}
+
+.products-table th {
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+    color: #555;
+    text-transform: uppercase;
+}
+
+.product-row {
+    border-bottom: 1px solid #ececec;
+}
+
+.product-name {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 600;
+    color: #222;
+}
+
+.product-icon {
+    font-size: 1.2rem;
+}
+
+.product-category,
+.product-price,
+.product-stock,
+.product-actions {
+    color: #555;
+}
+
+.stock-badge {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    background: #e8f8f5;
+    color: #097969;
+    font-weight: 700;
+}
+
+.product-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.btn-edit {
+    background: #f0f4ff;
+    color: #1f4ecc;
+}
+
+.btn-delete {
+    background: #ffefef;
+    color: #cc0000;
+    border: none;
+    cursor: pointer;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    margin: 0.75rem 0 0.5rem 0;
+    font-size: 1.5rem;
+}
+
+.empty-state p {
+    margin: 0;
+    color: #666;
+}
+</style>
+{% endblock %}

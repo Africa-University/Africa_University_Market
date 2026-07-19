@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block title %}Contact Us - Africa University Market{% endblock %}
+{% block meta_description %}Get in touch with the Africa University Farm team for inquiries about our fresh agricultural products.{% endblock %}
+
+{% block content %}
+<section class="page-header" style="background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('{{ url_for('static', filename='images/au_farm.jpg') }}') center/cover; padding: 4rem 0; color: white; text-align: center; margin-bottom: 3rem; background-color: var(--primary-color);">
+    <div class="container">
+        <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem;">Contact Us</h1>
+        <p style="font-size: 1.1rem; max-width: 600px; margin: 0 auto; opacity: 0.9;">Have questions about our products or want to place a bulk order? We'd love to hear from you.</p>
+    </div>
+</section>
+
+<div class="container" style="padding-bottom: 4rem;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 3rem;">
+        
+        <!-- Contact Form -->
+        <div style="background: white; padding: 2.5rem; border-radius: var(--radius); box-shadow: var(--shadow-md); border: 1px solid var(--border-color);">
+            <h2 style="margin-top: 0; margin-bottom: 1.5rem; color: var(--text-primary);">Send a Message</h2>
+            <form method="POST" action="{{ url_for('contact') }}">
+                <div class="form-group">
+                    <label for="name" class="form-label">Full Name *</label>
+                    <input type="text" id="name" name="name" class="form-control" required placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label for="email" class="form-label">Email Address *</label>
+                    <input type="email" id="email" name="email" class="form-control" required placeholder="john@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="subject" class="form-label">Subject</label>
+                    <input type="text" id="subject" name="subject" class="form-control" placeholder="How can we help?">
+                </div>
+                <div class="form-group">
+                    <label for="message" class="form-label">Message *</label>
+                    <textarea id="message" name="message" class="form-control" rows="5" required placeholder="Your message here..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block" style="padding: 0.8rem; font-size: 1.05rem;">Send Message</button>
+            </form>
+        </div>
+
+        <!-- Contact Information -->
+        <div style="display: flex; flex-direction: column; gap: 2rem;">
+            <div>
+                <h3 style="color: var(--primary-color); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                    📍 Visit the Farm
+                </h3>
+                <p style="color: var(--text-secondary); line-height: 1.6;">
+                    <strong>Africa University Main Campus</strong><br>
+                    Fairview Road, Off Nyanga Road<br>
+                    Mutare, Zimbabwe
+                </p>
+            </div>
+            
+            <div>
+                <h3 style="color: var(--primary-color); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                    📞 Call Us
+                </h3>
+                <p style="color: var(--text-secondary); line-height: 1.6;">
+                    <strong>Sales Desk:</strong> +263 20 60026<br>
+                    <strong>Farm Manager:</strong> +263 772 123 456
+                </p>
+            </div>
+
+            <div>
+                <h3 style="color: var(--primary-color); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                    ✉️ Email Us
+                </h3>
+                <p style="color: var(--text-secondary); line-height: 1.6;">
+                    <strong>General Inquiries:</strong> farm@africau.edu<br>
+                    <strong>Bulk Orders:</strong> sales@africau.edu
+                </p>
+            </div>
+            
+            <!-- Map Placeholder -->
+            <div style="width: 100%; height: 200px; background: #eee; border-radius: var(--radius); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; color: var(--text-secondary);">
+                Interactive Map Placeholder
+            </div>
+        </div>
+        
+    </div>
+</div>
+{% endblock %}
