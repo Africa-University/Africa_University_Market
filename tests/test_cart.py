@@ -145,6 +145,30 @@ class CartFlowTestCase(unittest.TestCase):
         with self.client.session_transaction() as session:
             self.assertEqual(session["currency"], "USD")
 
+    def test_currency_preference_survives_login(self):
+        with self.app.app_context():
+            user = User(
+                fullname="Test Customer",
+                email="customer@example.com",
+                role="customer",
+            )
+            user.set_password("secret123")
+            db.session.add(user)
+            db.session.commit()
+
+        with self.client.session_transaction() as session:
+            session["currency"] = "USD"
+
+        response = self.client.post(
+            "/login",
+            data={"email": "customer@example.com", "password": "secret123"},
+            follow_redirects=True,
+        )
+        self.assertEqual(response.status_code, 200)
+
+        with self.client.session_transaction() as session:
+            self.assertEqual(session.get("currency"), "USD")
+
     def test_default_admin_credentials_are_bootstrapped(self):
         with self.app.app_context():
             other_admin = User(
@@ -163,6 +187,41 @@ class CartFlowTestCase(unittest.TestCase):
             self.assertEqual(default_admin.role, "admin")
             self.assertTrue(default_admin.check_password("Admin123!"))
 
+    def test_admin_can_add_product_with_stock(self):
+        with self.app.app_context():
+            admin = User(
+                fullname="Admin User",
+                email="admin-add@example.com",
+                role="admin",
+            )
+            admin.set_password("secret123")
+            db.session.add(admin)
+            db.session.commit()
+
+            with self.client.session_transaction() as session:
+                session["user_id"] = admin.id
+                session["user_role"] = admin.role
+                session["user_name"] = admin.fullname
+
+        response = self.client.post(
+            "/admin/products/add",
+            data={
+                "name": "Fresh Maize",
+                "description": "Sweet maize from the orchard",
+                "price": "9.99",
+                "stock": "15",
+                "category_id": "1",
+            },
+            follow_redirects=True,
+        )
+        self.assertEqual(response.status_code, 200)
+
+        with self.app.app_context():
+            product = Product.query.filter_by(name="Fresh Maize").first()
+            self.assertIsNotNone(product)
+            self.assertEqual(product.stock, 15)
+            self.assertEqual(product.category_id, 1)
+
     def test_receipt_download_returns_pdf(self):
         with self.client.session_transaction() as session:
             session["last_receipt"] = {
@@ -179,6 +238,23 @@ class CartFlowTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.mimetype, "application/pdf")
         self.assertIn(b"%PDF", response.data)
+
+    def test_receipt_pdf_uses_selected_currency_symbol(self):
+        with self.client.session_transaction() as session:
+            session["currency"] = "USD"
+            session["last_receipt"] = {
+                "order_number": "AU-USD-RECEIPT",
+                "date": "Today",
+                "customer": "Test Customer",
+                "email": "test@example.com",
+                "line_items": [{"name": "Tomatoes", "quantity": 1, "subtotal": 5.99}],
+                "total": 5.99,
+                "payment_method": "Cash on pickup",
+            }
+
+        response = self.client.get("/receipt/download")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"$5.99", response.data)
 
 
 if __name__ == "__main__":

@@ -163,7 +163,7 @@ import os
 
 app.config["UPLOAD_FOLDER"] = os.path.join(
     app.root_path,
-    "static/uploads"
+    "static","uploads"
 )
 
 
@@ -193,7 +193,7 @@ def get_cart_items():
 def inject_cart():
     cart_items = get_cart_items()
     cart_total = sum(item["price"] * item["quantity"] for item in cart_items)
-    currency = session.get("currency", "ZAR")
+    currency = session.get("currency", "USD")
     currency_info = {
         "ZAR": {"code": "ZAR", "symbol": "R", "label": "South African Rand"},
         "USD": {"code": "USD", "symbol": "$", "label": "US Dollar"},
@@ -374,9 +374,17 @@ def download_receipt():
             "payment_method": "Cash on pickup",
         }
 
+    currency = session.get("currency", "USD")
+    currency_info = {
+        "ZAR": {"code": "ZAR", "symbol": "R", "label": "South African Rand"},
+        "USD": {"code": "USD", "symbol": "$", "label": "US Dollar"},
+        "EUR": {"code": "EUR", "symbol": "€", "label": "Euro"},
+    }.get(currency, {"code": currency, "symbol": currency, "label": currency})
+    currency_symbol = currency_info["symbol"]
+
     if canvas is not None and colors is not None and letter is not None and inch is not None and ImageReader is not None:
         buffer = BytesIO()
-        pdf = canvas.Canvas(buffer, pagesize=letter)
+        pdf = canvas.Canvas(buffer, pagesize=letter, pageCompression=0)
         width, height = letter
 
         logo_path = os.path.join(app.root_path, "static", "images", "logo.png")
@@ -419,7 +427,7 @@ def download_receipt():
             quantity = item.get("quantity", 0)
             subtotal = item.get("subtotal", 0)
             pdf.drawString(0.75 * inch, y, f"{item_name} x{quantity}")
-            pdf.drawRightString(width - 0.75 * inch, y, f"R{subtotal:.2f}")
+            pdf.drawRightString(width - 0.75 * inch, y, f"{currency_symbol}{subtotal:.2f}")
             y -= 0.28 * inch
 
         if not receipt_data.get("line_items"):
@@ -430,7 +438,7 @@ def download_receipt():
         pdf.line(0.75 * inch, y - 0.2 * inch, width - 0.75 * inch, y - 0.2 * inch)
         pdf.setFont("Helvetica-Bold", 12)
         pdf.drawString(0.75 * inch, y - 0.6 * inch, "Total paid")
-        pdf.drawRightString(width - 0.75 * inch, y - 0.6 * inch, f"R{receipt_data.get('total', 0):.2f}")
+        pdf.drawRightString(width - 0.75 * inch, y - 0.6 * inch, f"{currency_symbol}{receipt_data.get('total', 0):.2f}")
 
         pdf.setFillColor(colors.HexColor("#cc0000"))
         pdf.setFont("Helvetica-Oblique", 9)
@@ -440,46 +448,49 @@ def download_receipt():
         pdf.save()
         response = make_response(buffer.getvalue())
     else:
-        receipt_text = "\n".join([
+        receipt_lines = [
             f"Receipt: {receipt_data.get('order_number', 'Unknown')}",
             f"Date: {receipt_data.get('date', '')}",
             f"Customer: {receipt_data.get('customer', '')}",
             f"Email: {receipt_data.get('email', '')}",
-            "",
+            f"Payment method: {receipt_data.get('payment_method', 'Cash on pickup')}",
             "Items:",
-        ])
+        ]
 
         for item in receipt_data.get("line_items", []):
-            receipt_text += f"\n- {item.get('name', '')} x{item.get('quantity', 0)}: {item.get('subtotal', 0):.2f}"
+            receipt_lines.append(f"- {item.get('name', '')} x{item.get('quantity', 0)}: {currency_symbol}{item.get('subtotal', 0):.2f}")
 
-        receipt_text += f"\n\nTotal: {receipt_data.get('total', 0):.2f}"
-
+        receipt_lines.append(f"Total: {currency_symbol}{receipt_data.get('total', 0):.2f}")
+        receipt_text = " ".join(line for line in receipt_lines if line)
         escaped_receipt_text = receipt_text.replace("\\", "\\\\").replace("(", "\\(").replace(")", "\\)")
-        pdf_content = (
-            "%PDF-1.4\n"
-            "1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n"
-            "2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n"
-            "3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>\nendobj\n"
-            "4 0 obj\n<< /Length 0 >>\nstream\n"
-            f"BT /F1 12 Tf 72 720 Td ({escaped_receipt_text}) Tj ET\n"
-            "endstream\nendobj\n"
-            "5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n"
-            "xref\n"
-            "0 6\n"
-            "0000000000 65535 f \n"
-            "0000000010 00000 n \n"
-            "0000000062 00000 n \n"
-            "0000000119 00000 n \n"
-            "0000000203 00000 n \n"
-            "0000000304 00000 n \n"
-            "trailer\n"
-            "<< /Size 6 /Root 1 0 R >>\n"
-            "startxref\n"
-            "0\n"
-            "%%EOF\n"
+
+        content = (
+            f"BT /F1 12 Tf 72 720 Td ({escaped_receipt_text}) Tj ET"
+        )
+        object_payloads = [
+            "1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n",
+            "2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n",
+            "3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>\nendobj\n",
+            f"4 0 obj\n<< /Length {len(content.encode('latin-1', 'replace'))} >>\nstream\n{content}\nendstream\nendobj\n",
+            "5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n",
+        ]
+
+        pdf_bytes = bytearray(b"%PDF-1.4\n")
+        offsets = [0]
+        for payload in object_payloads:
+            offsets.append(len(pdf_bytes))
+            pdf_bytes.extend(payload.encode("latin-1", "replace"))
+
+        xref_offset = len(pdf_bytes)
+        pdf_bytes.extend(f"xref\n0 {len(object_payloads) + 1}\n".encode("latin-1", "replace"))
+        pdf_bytes.extend(b"0000000000 65535 f \n")
+        for offset in offsets[1:]:
+            pdf_bytes.extend(f"{offset:010d} 00000 n \n".encode("latin-1", "replace"))
+        pdf_bytes.extend(
+            f"trailer\n<< /Size {len(object_payloads) + 1} /Root 1 0 R >>\nstartxref\n{xref_offset}\n%%EOF\n".encode("latin-1", "replace")
         )
 
-        response = make_response(pdf_content.encode("latin-1", "replace"))
+        response = make_response(bytes(pdf_bytes))
     response.headers["Content-Type"] = "application/pdf"
     response.headers["Content-Disposition"] = (
         f"attachment; filename={receipt_data.get('order_number', 'receipt').replace(' ', '_')}.pdf"
@@ -529,6 +540,7 @@ def login():
     if request.method == "POST":
         email = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "")
+        preferred_currency = session.get("currency", "USD")
 
         if email == "admin@africau.edu":
             ensure_default_admin()
@@ -540,6 +552,7 @@ def login():
             return render_template("auth/login.html")
 
         session.clear()
+        session["currency"] = preferred_currency
         session["user_id"] = user.id
         session["user_role"] = user.role
         session["user_name"] = user.fullname
@@ -555,6 +568,7 @@ def admin_login():
     if request.method == "POST":
         email = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "")
+        preferred_currency = session.get("currency", "USD")
 
         if email == "admin@africau.edu":
             ensure_default_admin()
@@ -570,6 +584,7 @@ def admin_login():
             return render_template("auth/admin_login.html")
 
         session.clear()
+        session["currency"] = preferred_currency
         session["user_id"] = user.id
         session["user_role"] = user.role
         session["user_name"] = user.fullname
@@ -653,6 +668,7 @@ def add_product():
         name = request.form.get("name")
         description = request.form.get("description")
         price = request.form.get("price")
+        stock = request.form.get("stock", "0")
         category_id = request.form.get("category_id")
 
         image_file = request.files.get("image")
@@ -676,6 +692,7 @@ def add_product():
             name=name,
             description=description,
             price=float(price),
+            stock=max(0, int(stock or 0)),
             image=image_name,
             category_id=category_id
         )
