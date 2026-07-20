@@ -1,9 +1,9 @@
-class Config:
-    # Security key for sessions
-    SECRET_KEY = "dev-key"
+import os
 
-    # SQLite database (local file)
+
+class Config:
+    SECRET_KEY = os.environ.get("SECRET_KEY", "dev-key-change-this")
+
     SQLALCHEMY_DATABASE_URI = "sqlite:///market.db"
 
-    # Disable tracking for performance
     SQLALCHEMY_TRACK_MODIFICATIONS = False

@@ -219,6 +219,22 @@ def products():
     products = Product.query.all()
     return render_template("products.html", products=products)
 
+@app.route("/contact", methods=["GET", "POST"])
+def contact():
+    if request.method == "POST":
+        name = request.form.get("name")
+        email = request.form.get("email")
+        subject = request.form.get("subject")
+        message = request.form.get("message")
+        
+        if not name or not email or not message:
+            flash("Please fill in all required fields.", "danger")
+        else:
+            flash("Thank you for contacting us! Your message has been received.", "success")
+            return redirect(url_for("contact"))
+            
+    return render_template("contact.html")
+
 @app.route("/product/<int:product_id>")
 def product_detail(product_id):
     product = Product.query.get_or_404(product_id)
@@ -750,4 +766,6 @@ def delete_product(product_id):
 # RUN APPLICATION
 # =========================
 if __name__ == "__main__":
-    app.run(debug=True)
+    port=int(os.environ.get("PORT", 5000 )) 
+    app.run(host="0.0.0.0", port=port, debug=False)
+
