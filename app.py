@@ -120,6 +120,7 @@ def create_app():
 
     with app.app_context():
         db.create_all()
+        
 
         ensure_default_admin()
         print(
@@ -130,14 +131,9 @@ def create_app():
         # Create default categories if none exist
         if Category.query.count() == 0:
             default_categories = [
-                "Grains & Cereals",
-                "Vegetables",
-                "Fruits",
-                "Dairy & Eggs",
-                "Meat & Poultry",
-                "Herbs & Spices",
-                "Honey & Preserves",
-                "Seeds & Seedlings"
+                "Poultry",
+                "Pig Production",
+                
             ]
             for cat_name in default_categories:
                 db.session.add(Category(name=cat_name))
@@ -216,8 +212,28 @@ def home():
 
 @app.route("/products")
 def products():
-    products = Product.query.all()
-    return render_template("products.html", products=products)
+    category_name = request.args.get("category")
+
+    if category_name:
+        category = Category.query.filter_by(name=category_name).first()
+
+        if category:
+            products = Product.query.filter_by(
+                category_id=category.id
+            ).all()
+        else:
+            products = []
+    else:
+        products = Product.query.all()
+
+    categories = Category.query.all()
+
+    return render_template(
+        "products.html",
+        products=products,
+        categories=categories
+    )
+
 
 @app.route("/contact", methods=["GET", "POST"])
 def contact():
