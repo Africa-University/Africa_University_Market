@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block title %}Categories - Africa University Market{% endblock %}
+
+{% block meta_description %}
+Learn more about Africa University Farm's poultry and pig production categories.
+{% endblock %}
+
+
+{% block content %}
+
+<section class="page-header">
+    <div class="container">
+        <h1>Our Product Categories</h1>
+        <p>
+            Discover the different agricultural products produced at 
+            Africa University Farm.
+        </p>
+    </div>
+</section>
+
+
+<section class="container" style="margin-top: 3rem; margin-bottom: 4rem;">
+
+
+    <!-- Poultry Category -->
+    <div class="category-section">
+
+        <h2 class="section-title">
+            🐔 Poultry Production
+        </h2>
+
+
+        <p>
+            Africa University Farm produces high-quality poultry products
+            from healthy, well-managed birds. Our poultry unit focuses on
+            providing fresh products that meet quality and safety standards.
+        </p>
+
+
+        <div class="product-grid">
+
+
+            <div class="product-card">
+
+                <img src="{{ url_for('static', filename='images/chicken.jpeg') }}"
+                     class="product-image"
+                     alt="Dressed Chicken">
+
+                <div class="product-details">
+
+                    <h3>Dressed Chicken</h3>
+
+                    <p>
+                        Freshly processed chicken prepared for consumers
+                        looking for quality farm-produced poultry.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="product-card">
+
+                <img src="{{ url_for('static', filename='images/Chickenoffals.jpeg') }}"
+                     class="product-image"
+                     alt="Chicken Offal">
+
+                <div class="product-details">
+
+                    <h3>Chicken Offal</h3>
+
+                    <p>
+                        Quality chicken offal including nutritious cuts
+                        suitable for different meals.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="product-card">
+
+                <img src="{{ url_for('static', filename='images/eggs.jpeg') }}"
+                     class="product-image"
+                     alt="Farm Eggs">
+
+                <div class="product-details">
+
+                    <h3>Farm Fresh Eggs</h3>
+
+                    <p>
+                        Fresh eggs produced from healthy laying hens
+                        raised at Africa University Farm.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+
+    <!-- Pig Production Category -->
+
+    <div class="category-section" style="margin-top:4rem;">
+
+
+        <h2 class="section-title">
+            🐖 Pig Production
+        </h2>
+
+
+        <p>
+            Our pig production unit focuses on quality pork production
+            and breeding services for farmers interested in improving
+            their livestock production.
+        </p>
+
+
+
+        <div class="product-grid">
+
+
+            <div class="product-card">
+
+                <img src="{{ url_for('static', filename='images/Pork.jpeg') }}"
+                     class="product-image"
+                     alt="Pork">
+
+                <div class="product-details">
+
+                    <h3>Pork</h3>
+
+                    <p>
+                        Quality pork products from healthy pigs raised
+                        under proper farm management practices.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+
+            <div class="product-card">
+
+                <img src="{{ url_for('static', filename='images/servicedgilts.jpeg') }}"
+                     class="product-image"
+                     alt="Serviced Gilts">
+
+                <div class="product-details">
+
+                    <h3>Serviced Gilts</h3>
+
+                    <p>
+                        Healthy serviced gilts available for farmers
+                        interested in expanding their pig enterprises.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+
+            <div class="product-card">
+
+                <img src="{{ url_for('static', filename='images/breedingboars.jpeg') }}"
+                     class="product-image"
+                     alt="Breeding Boars">
+
+                <div class="product-details">
+
+                    <h3>Breeding Boars</h3>
+
+                    <p>
+                        Strong breeding boars selected to support
+                        improved pig genetics and production.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</section>
+
+
+{% endblock %}
