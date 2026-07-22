@@ -3,81 +3,132 @@
 {% block title %}Home - Africa University Market{% endblock %}
 
 {% block content %}
+
 <header class="page-header">
     <div class="container">
         <h1>Fresh from Our Farms to You</h1>
-        <p>Discover high-quality, organically grown produce directly from the Africa University Farm.</p>
+        <p>Discover high-quality agricultural products directly from the Africa University Farm.</p>
         <br>
-        <a href="{{ url_for('products') }}" class="btn btn-primary" style="font-size: 1.1rem; padding: 0.8rem 2rem;">Shop Now</a>
+        <a href="{{ url_for('products') }}" class="btn btn-primary" style="font-size: 1.1rem; padding: 0.8rem 2rem;">
+            Explore Products
+        </a>
     </div>
 </header>
 
+
 <section class="container">
     <h2 class="section-title">Featured Products</h2>
-    <div class="product-grid">
-        <!-- Placeholder Product 1 -->
-        <div class="product-card">
-            <div class="product-image-container">
-                <span class="product-category">Vegetables</span>
-                <img src="https://images.unsplash.com/photo-1518843875459-f738682238a6?auto=format&fit=crop&w=800&q=80" alt="Fresh Tomatoes" class="product-image">
-            </div>
-            <div class="product-details">
-                <h3 class="product-title">Organic Roma Tomatoes</h3>
-                <p class="product-description">Freshly harvested, pesticide-free tomatoes perfect for salads and cooking.</p>
-                <div class="product-price">$2.50 / kg</div>
-                <div class="product-actions">
-                    <button class="btn btn-primary btn-block">Add to Cart</button>
-                </div>
-            </div>
-        </div>
 
-        <!-- Placeholder Product 2 -->
+    <div class="product-grid">
+
+        <!-- Dressed Chicken -->
         <div class="product-card">
             <div class="product-image-container">
                 <span class="product-category">Poultry</span>
-                <img src="https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?auto=format&fit=crop&w=800&q=80" alt="Farm Fresh Eggs" class="product-image">
+                <img src="https://images.unsplash.com/photo-1587593810167-a84920ea0781?auto=format&fit=crop&w=800&q=80"
+                     alt="Dressed Chicken"
+                     class="product-image">
             </div>
+
             <div class="product-details">
-                <h3 class="product-title">Free-Range Eggs</h3>
-                <p class="product-description">A tray of 30 large, free-range brown eggs from healthy AU hens.</p>
-                <div class="product-price">$4.00 / tray</div>
-                <div class="product-actions">
-                    <button class="btn btn-primary btn-block">Add to Cart</button>
-                </div>
+                <h3 class="product-title">Dressed Chicken</h3>
+                <p class="product-description">
+                    Freshly processed, high-quality dressed chicken produced from healthy farm-raised birds.
+                </p>
             </div>
         </div>
 
-        <!-- Placeholder Product 3 -->
+
+        <!-- Chicken Offal -->
         <div class="product-card">
             <div class="product-image-container">
-                <span class="product-category">Dairy</span>
-                <img src="https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=800&q=80" alt="Fresh Milk" class="product-image">
+                <span class="product-category">Poultry</span>
+                <img src="https://images.unsplash.com/photo-1604503468506-a8da13d82791?auto=format&fit=crop&w=800&q=80"
+                     alt="Chicken Offal"
+                     class="product-image">
             </div>
+
             <div class="product-details">
-                <h3 class="product-title">Fresh Full-Cream Milk</h3>
-                <p class="product-description">Pasteurized full-cream milk directly from the AU dairy farm.</p>
-                <div class="product-price">$1.20 / L</div>
-                <div class="product-actions">
-                    <button class="btn btn-primary btn-block">Add to Cart</button>
-                </div>
+                <h3 class="product-title">Chicken Offal</h3>
+                <p class="product-description">
+                    Fresh chicken offal prepared with quality standards for delicious meals.
+                </p>
             </div>
         </div>
-        
-        <!-- Placeholder Product 4 -->
+
+
+        <!-- Pork -->
         <div class="product-card">
             <div class="product-image-container">
-                <span class="product-category">Fruits</span>
-                <img src="https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=800&q=80" alt="Apples" class="product-image">
+                <span class="product-category">Pork</span>
+                <img src="https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?auto=format&fit=crop&w=800&q=80"
+                     alt="Pork"
+                     class="product-image">
             </div>
+
             <div class="product-details">
-                <h3 class="product-title">Crisp Red Apples</h3>
-                <p class="product-description">Sweet, juicy, and perfect for a healthy snack or baking.</p>
-                <div class="product-price">$3.00 / kg</div>
-                <div class="product-actions">
-                    <button class="btn btn-primary btn-block">Add to Cart</button>
-                </div>
+                <h3 class="product-title">Pork</h3>
+                <p class="product-description">
+                    Quality pork products from well-managed and healthy pigs raised at Africa University Farm.
+                </p>
             </div>
         </div>
+
+
+        <!-- Serviced Gilts -->
+        <div class="product-card">
+            <div class="product-image-container">
+                <span class="product-category">Pig Breeding</span>
+                <img src="https://images.unsplash.com/photo-1516467508483-a7212febe31a?auto=format&fit=crop&w=800&q=80"
+                     alt="Serviced Gilts"
+                     class="product-image">
+            </div>
+
+            <div class="product-details">
+                <h3 class="product-title">Serviced Gilts</h3>
+                <p class="product-description">
+                    Healthy serviced gilts available for farmers interested in expanding pig production.
+                </p>
+            </div>
+        </div>
+
+
+        <!-- Breeding Boars -->
+        <div class="product-card">
+            <div class="product-image-container">
+                <span class="product-category">Pig Breeding</span>
+                <img src="https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=800&q=80"
+                     alt="Breeding Boars"
+                     class="product-image">
+            </div>
+
+            <div class="product-details">
+                <h3 class="product-title">Breeding Boars</h3>
+                <p class="product-description">
+                    Strong and healthy breeding boars suitable for improving pig production.
+                </p>
+            </div>
+        </div>
+
+
+        <!-- Eggs -->
+        <div class="product-card">
+            <div class="product-image-container">
+                <span class="product-category">Poultry</span>
+                <img src="https://images.unsplash.com/photo-1506976785307-8732e854ad03?auto=format&fit=crop&w=800&q=80"
+                     alt="Farm Fresh Eggs"
+                     class="product-image">
+            </div>
+
+            <div class="product-details">
+                <h3 class="product-title">Farm Fresh Eggs</h3>
+                <p class="product-description">
+                    Fresh eggs produced from healthy farm-raised hens at Africa University Farm.
+                </p>
+            </div>
+        </div>
+
     </div>
 </section>
+
 {% endblock %}
