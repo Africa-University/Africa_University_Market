@@ -24,7 +24,7 @@
             <li><a href="{{ url_for('contact') }}" class="nav-link">Contact</a></li>
             <li>
                 <a href="{{ url_for('categories') }}" class="nav-link">
-Categories
+Production Units
                 </a>
             </li>
             <li class="nav-cart-wrapper">
@@ -63,14 +63,14 @@ Categories
                 </div>
             </li>
             {% if g.user %}
-                <li><a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a></li>
+                <li><a href="{{ url_for('admin_dashboard') }}" class="nav-link">Dashboard</a></li>
                 {% if g.user.role == 'admin' %}
-                    <li><a href="{{ url_for('admin') }}" class="nav-link">Admin</a></li>
+                    <li><a href="{{ url_for('admin_dashboard') }}" class="nav-link">Admin</a></li>
                 {% endif %}
                 <li><a href="{{ url_for('logout') }}" class="nav-link">Logout</a></li>
             {% else %}
                 <li><a href="{{ url_for('login') }}" class="nav-link">Login</a></li>
-                <li><a href="{{ url_for('admin_login') }}" class="nav-link">Admin Login</a></li>
+                <li><a href="{{ url_for('admin_dashboard') }}" class="nav-link">Admin Login</a></li>
                 <li><a href="{{ url_for('register') }}" class="btn btn-primary">Sign Up</a></li>
             {% endif %}
         </ul>

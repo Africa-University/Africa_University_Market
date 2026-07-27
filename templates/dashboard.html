@@ -46,7 +46,7 @@
         <a href="{{ url_for('products') }}" class="action-link">Browse Products</a>
         <a href="{{ url_for('cart') }}" class="action-link action-link-secondary">View Cart</a>
         {% if g.user.role == 'admin' %}
-        <a href="{{ url_for('admin') }}" class="action-link action-link-admin">Open Admin Panel</a>
+        <a href="{{ url_for('admin_dashboard') }}" class="action-link action-link-admin">Open Admin Panel</a>
         {% endif %}
     </section>
 </div>

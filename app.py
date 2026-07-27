@@ -15,7 +15,7 @@ from flask import (
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from config import Config
-from models import db, Product, Category, Order, OrderItem
+from models import db, User, Product, Category, Order, OrderItem
 import os
 from io import BytesIO
 
@@ -34,26 +34,6 @@ except ImportError:
     canvas = None
     ImageReader = None
 
-# =========================
-# USER MODEL
-# =========================
-class User(db.Model):
-    __tablename__ = "users"
-
-    id = db.Column(db.Integer, primary_key=True)
-    fullname = db.Column(db.String(120), nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(256), nullable=False)
-    role = db.Column(db.String(50), nullable=False, default="customer")
-
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
-
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
-
-    def is_admin(self):
-        return self.role == "admin"
 
 
 def ensure_default_admin():
@@ -161,7 +141,158 @@ app.config["UPLOAD_FOLDER"] = os.path.join(
     app.root_path,
     "static","uploads"
 )
+# =========================
+# AUTHENTICATION ROUTES
+# =========================
 
+@app.route("/register", methods=["GET", "POST"])
+def register():
+
+    if request.method == "POST":
+
+        fullname = request.form.get("fullname")
+        email = request.form.get("email")
+        phone = request.form.get("phone")
+        address = request.form.get("address")
+        password = request.form.get("password")
+
+
+        existing_user = User.query.filter_by(
+            email=email
+        ).first()
+
+
+        if existing_user:
+            flash(
+                "Email already registered.",
+                "danger"
+            )
+            return redirect(
+                url_for("register")
+            )
+
+
+        user = User(
+            fullname=fullname,
+            email=email,
+            phone=phone,
+            address=address,
+            role="customer"
+        )
+
+
+        user.set_password(password)
+
+        db.session.add(user)
+        db.session.commit()
+
+
+        flash(
+            "Registration successful. Please login.",
+            "success"
+        )
+
+        return redirect(
+            url_for("login")
+        )
+
+
+    return render_template(
+        "auth/register.html"
+    )
+
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+
+    if request.method == "POST":
+
+        email = request.form.get("email")
+        password = request.form.get("password")
+
+
+        user = User.query.filter_by(
+            email=email
+        ).first()
+
+
+        if user and user.check_password(password):
+
+            session["user_id"] = user.id
+
+
+            flash(
+                "Login successful.",
+                "success"
+            )
+
+            return redirect(
+                url_for("home")
+            )
+
+
+        flash(
+            "Invalid email or password.",
+            "danger"
+        )
+
+
+    return render_template(
+        "auth/login.html"
+    )
+
+
+
+@app.route("/logout")
+def logout():
+
+    session.clear()
+
+    flash(
+        "Logged out successfully.",
+        "success"
+    )
+
+    return redirect(
+        url_for("home")
+    )
+
+
+
+@app.route("/admin/login", methods=["GET", "POST"])
+def admin_login():
+
+    if request.method == "POST":
+
+        email = request.form.get("email")
+        password = request.form.get("password")
+
+
+        admin = User.query.filter_by(
+            email=email,
+            role="admin"
+        ).first()
+
+
+        if admin and admin.check_password(password):
+
+            session["user_id"] = admin.id
+
+            return redirect(
+                url_for("admin_dashboard")
+            )
+
+
+        flash(
+            "Invalid admin details.",
+            "danger"
+        )
+
+
+    return render_template(
+        "auth/admin_login.html"
+    )
 
 def get_cart_items():
     cart_entries = session.get("cart", [])
@@ -214,6 +345,15 @@ def home():
     return render_template(
         "index.html",
         featured_products=featured_products
+    )
+
+@app.route("/categories")
+def categories():
+    categories = Category.query.all()
+
+    return render_template(
+        "categories.html",
+        categories=categories
     )
 
 @app.route("/products")
@@ -289,4 +429,88 @@ def add_to_cart(product_id):
     quantity = int(request.form.get("quantity", 1) or 1)
     quantity = max(1, quantity)
 
-    if product.stock > 0 and quantity > p
+    if product.stock >= quantity:
+        cart = session.get("cart", [])
+
+        for item in cart:
+            if item["product_id"] == product_id:
+                item["quantity"] += quantity
+                break
+        else:
+            cart.append({
+                "product_id": product_id,
+                "quantity": quantity
+            })
+
+        session["cart"] = cart
+        flash(f"Added {quantity} x {product.name} to your cart.", "success")
+
+    return redirect(url_for("cart"))
+# =========================
+# ADMIN DASHBOARD
+# =========================
+
+@app.route("/admin/dashboard")
+@role_required("admin")
+def admin_dashboard():
+
+    products = Product.query.all()
+
+    orders = Order.query.all()
+
+    return render_template(
+        "dashboard.html",
+        products=products,
+        orders=orders
+    )
+
+@app.route("/admin/add-product", methods=["GET", "POST"])
+@role_required("admin")
+def add_product():
+
+    categories = Category.query.all()
+
+
+    if request.method == "POST":
+
+        name = request.form.get("name")
+        price = request.form.get("price")
+        stock = request.form.get("stock")
+        description = request.form.get("description")
+        category_id = request.form.get("category_id")
+
+
+        product = Product(
+            name=name,
+            price=float(price),
+            stock=int(stock),
+            description=description,
+            category_id=category_id
+        )
+
+
+        db.session.add(product)
+        db.session.commit()
+
+
+        flash(
+            "Product added successfully.",
+            "success"
+        )
+
+
+        return redirect(
+            url_for("admin_dashboard")
+        )
+
+
+    return render_template(
+        "admin/add_product.html",
+        categories=categories
+    )
+# =========================
+# RUN APPLICATION
+# =========================
+
+if __name__ == "__main__":
+    app.run(debug=True)
