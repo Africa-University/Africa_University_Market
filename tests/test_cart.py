@@ -1,4 +1,5 @@
 import unittest
+from sqlalchemy import create_engine
 
 from app import app, db, User, ensure_default_admin
 from models import Category, Product, Order
@@ -9,11 +10,14 @@ class CartFlowTestCase(unittest.TestCase):
         self.app = app
         self.app.config.update(TESTING=True, SECRET_KEY="test-secret")
         self.client = self.app.test_client()
-
+        self.test_engine = create_engine("sqlite://")
         with self.app.app_context():
-            db.drop_all()
+            self.original_engine = db.engine
+            db.session.remove()
+            self.app.extensions["sqlalchemy"].engines[None] = self.test_engine
             db.create_all()
 
+        with self.app.app_context():
             category = Category(name="Vegetables")
             db.session.add(category)
             db.session.commit()
@@ -28,6 +32,12 @@ class CartFlowTestCase(unittest.TestCase):
             db.session.add(product)
             db.session.commit()
             self.product_id = product.id
+
+    def tearDown(self):
+        with self.app.app_context():
+            db.session.remove()
+            self.app.extensions["sqlalchemy"].engines[None] = self.original_engine
+        self.test_engine.dispose()
 
     def test_add_update_and_checkout_flow(self):
         add_response = self.client.post(

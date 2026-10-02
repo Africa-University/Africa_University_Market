@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard | Africa University Market{% endblock %}
+
+{% block content %}
+<section class="admin-dashboard" aria-labelledby="admin-title">
+    <header class="admin-header">
+        <div>
+            <p class="storefront-kicker">Store operations</p>
+            <h1 id="admin-title">Admin dashboard</h1>
+            <p class="admin-subtitle">Manage farm products and review recent orders.</p>
+        </div>
+        <a href="{{ url_for('add_product') }}" class="btn btn-primary admin-add-button"><span aria-hidden="true">+</span> Add product</a>
+    </header>
+
+    <div class="stats-grid" aria-label="Store summary">
+        <article class="stat-card">
+            <span class="stat-label">Catalog products</span>
+            <strong class="stat-value">{{ products|length }}</strong>
+        </article>
+        <article class="stat-card">
+            <span class="stat-label">Pending orders</span>
+            <strong class="stat-value">{{ pending_orders }}</strong>
+        </article>
+        <article class="stat-card">
+            <span class="stat-label">Completed orders</span>
+            <strong class="stat-value">{{ completed_orders }}</strong>
+        </article>
+    </div>
+
+    <section class="admin-section" aria-labelledby="products-heading">
+        <div class="admin-section-heading">
+            <div>
+                <h2 id="products-heading">Products</h2>
+                <p>{{ products|length }} listed in the storefront</p>
+            </div>
+        </div>
+
+        {% if products %}
+        <div class="admin-product-list">
+            {% for product in products %}
+            <article class="admin-product-row">
+                <img class="admin-product-image" src="{% if product.image %}{{ url_for('static', filename='uploads/' + product.image) }}{% else %}{{ url_for('static', filename='images/poultry.jpg') }}{% endif %}" alt="">
+                <div class="admin-product-info">
+                    <h3>{{ product.name }}</h3>
+                    <p>{{ product.category.name }}{% if product.description %} · {{ product.description }}{% endif %}</p>
+                </div>
+                <div class="admin-product-stock">
+                    <strong>{{ currency_info.symbol }}{{ '%.2f'|format(product.price) }}</strong>
+                    <span>{{ product.stock }} in stock</span>
+                </div>
+                <div class="admin-product-actions">
+                    <a href="{{ url_for('edit_product', product_id=product.id) }}" class="btn btn-outline btn-compact">Edit</a>
+                    <form method="post" action="{{ url_for('delete_product', product_id=product.id) }}" onsubmit="return confirm('Remove {{ product.name|e }} from the catalog?');">
+                        <button type="submit" class="btn btn-danger btn-compact">Remove</button>
+                    </form>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="admin-empty-state">
+            <h3>Your catalog is ready for its first product</h3>
+            <p>Add a product to make it available in the storefront.</p>
+            <a href="{{ url_for('add_product') }}" class="btn btn-primary">Add first product</a>
+        </div>
+        {% endif %}
+    </section>
+
+    <section class="admin-section" aria-labelledby="orders-heading">
+        <div class="admin-section-heading">
+            <div>
+                <h2 id="orders-heading">Recent orders</h2>
+                <p>Customer orders placed through the storefront</p>
+            </div>
+        </div>
+        {% if orders %}
+        <div class="admin-order-list">
+            {% for order in orders|sort(attribute='created_at', reverse=true) %}
+            <article class="admin-order-row">
+                <div><strong>#{{ order.order_number }}</strong><span>{{ order.created_at.strftime('%b %d, %Y') }}</span></div>
+                <div><strong>{{ order.customer_name }}</strong><span>{{ order.customer_email }}</span></div>
+                <div><strong>{{ order.items|length }} item{% if order.items|length != 1 %}s{% endif %}</strong><span>{{ order.status }}</span></div>
+                <strong>{{ currency_info.symbol }}{{ '%.2f'|format(order.total) }}</strong>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="admin-empty-note">No orders yet.</p>
+        {% endif %}
+    </section>
+</section>
+{% endblock %}

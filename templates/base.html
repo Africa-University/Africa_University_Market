@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="{% block meta_description %}Africa University Market - Fresh, high-quality agricultural products directly from the Africa University Farm.{% endblock %}">
     <title>{% block title %}Africa University Market{% endblock %}</title>
+    <meta name="theme-color" content="#ffffff">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
@@ -18,7 +19,10 @@
         <a href="{{ url_for('home') }}" class="navbar-brand">
             <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Africa University Logo">
         </a>
-        <ul class="navbar-nav">
+        <button class="nav-toggle" type="button" aria-controls="site-navigation" aria-expanded="false" aria-label="Open navigation menu">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="navbar-nav" id="site-navigation">
             <li><a href="{{ url_for('home') }}" class="nav-link">Home</a></li>
             <li><a href="{{ url_for('products') }}" class="nav-link">Shop</a></li>
             <li><a href="{{ url_for('contact') }}" class="nav-link">Contact</a></li>
@@ -63,14 +67,13 @@ Production Units
                 </div>
             </li>
             {% if g.user %}
-                <li><a href="{{ url_for('admin_dashboard') }}" class="nav-link">Dashboard</a></li>
                 {% if g.user.role == 'admin' %}
-                    <li><a href="{{ url_for('admin_dashboard') }}" class="nav-link">Admin</a></li>
+                    <li><a href="{{ url_for('admin_dashboard') }}" class="nav-link">Dashboard</a></li>
                 {% endif %}
                 <li><a href="{{ url_for('logout') }}" class="nav-link">Logout</a></li>
             {% else %}
                 <li><a href="{{ url_for('login') }}" class="nav-link">Login</a></li>
-                <li><a href="{{ url_for('admin_dashboard') }}" class="nav-link">Admin Login</a></li>
+                <li><a href="{{ url_for('admin_login') }}" class="nav-link">Admin Login</a></li>
                 <li><a href="{{ url_for('register') }}" class="btn btn-primary">Sign Up</a></li>
             {% endif %}
         </ul>
@@ -102,6 +105,34 @@ Production Units
     <script>
         let ticking = false;
         const navbar = document.querySelector('.navbar');
+        const navToggle = document.querySelector('.nav-toggle');
+        const siteNavigation = document.getElementById('site-navigation');
+
+        if (navToggle && siteNavigation) {
+            navToggle.addEventListener('click', function() {
+                const isOpen = navToggle.getAttribute('aria-expanded') === 'true';
+                navToggle.setAttribute('aria-expanded', String(!isOpen));
+                navToggle.setAttribute('aria-label', isOpen ? 'Open navigation menu' : 'Close navigation menu');
+                siteNavigation.classList.toggle('is-open', !isOpen);
+            });
+
+            siteNavigation.addEventListener('click', function(event) {
+                if (event.target.closest('a')) {
+                    navToggle.setAttribute('aria-expanded', 'false');
+                    navToggle.setAttribute('aria-label', 'Open navigation menu');
+                    siteNavigation.classList.remove('is-open');
+                }
+            });
+
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    navToggle.setAttribute('aria-expanded', 'false');
+                    navToggle.setAttribute('aria-label', 'Open navigation menu');
+                    siteNavigation.classList.remove('is-open');
+                    navToggle.focus();
+                }
+            });
+        }
 
         function updateNavbarState() {
             if (!navbar) return;

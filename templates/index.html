@@ -1,312 +1,80 @@
 {% extends "base.html" %}
 
-{% block title %}Home - Africa University Market{% endblock %}
-
+{% block title %}Africa University Market | Farm Produce{% endblock %}
+{% block meta_description %}Shop fresh poultry, pork, eggs, and farm products from Africa University Farm.{% endblock %}
 
 {% block content %}
-
-
-<header class="page-header">
-
-    <div class="container">
-
-        <h1>
-            Fresh From Our Farms To You
-        </h1>
-
-
-        <p>
-            Discover quality agricultural products produced with care
-            at Africa University Farm.
-        </p>
-
-
-        <br>
-
-
-        <a href="{{ url_for('products') }}" 
-           class="btn btn-primary"
-           style="font-size: 1.1rem; padding: 0.8rem 2rem;">
-            Explore Products
-        </a>
-
-
+<header class="storefront-hero">
+    <div class="storefront-hero-content">
+        <p class="storefront-kicker">Africa University Farm Shop</p>
+        <h1>Good food, grown<br>close to home.</h1>
+        <p>Shop quality farm products from our production units in Mutare.</p>
+        <div class="storefront-hero-actions">
+            <a href="{{ url_for('products') }}" class="btn btn-primary">Shop all products</a>
+            <a href="{{ url_for('categories') }}" class="hero-text-link">Explore production units <span aria-hidden="true">&#8594;</span></a>
+        </div>
     </div>
-
+    <div class="storefront-hero-image" role="img" aria-label="Fresh produce from Africa University Farm"></div>
 </header>
 
-
-
-<section class="container">
-
-    <h2 class="section-title">
-        Featured Products
-    </h2>
-
-
-    <p style="text-align:center; margin-bottom:2rem;">
-        Explore some of our farm products available through AU Market.
-    </p>
-
-
-
-    <div class="product-grid">
-
-
-        <!-- Dressed Chicken -->
-
-        <div class="product-card">
-
-            <div class="product-image-container">
-
-                <span class="product-category">
-                    Poultry
-                </span>
-
-
-                <img src="https://images.unsplash.com/photo-1587593810167-a84920ea0781?auto=format&fit=crop&w=800&q=80"
-                     alt="Dressed Chicken"
-                     class="product-image">
-
-            </div>
-
-
-            <div class="product-details">
-
-                <h3 class="product-title">
-                    Dressed Chicken
-                </h3>
-
-
-                <p class="product-description">
-                    Quality farm-produced dressed chicken prepared
-                    for consumers seeking fresh poultry products.
-                </p>
-
-            </div>
-
+<section class="storefront-section" aria-labelledby="featured-title">
+    <div class="storefront-section-heading">
+        <div>
+            <p class="storefront-kicker">From our farm to your table</p>
+            <h2 id="featured-title">Featured products</h2>
         </div>
-
-
-
-
-        <!-- Chicken Offal -->
-
-        <div class="product-card">
-
-            <div class="product-image-container">
-
-                <span class="product-category">
-                    Poultry
-                </span>
-
-
-                <img src="{{ url_for('static', filename='images/Chickenoffals.jpeg') }}"
-                     alt="Chicken Offal"
-                     class="product-image">
-
-            </div>
-
-
-            <div class="product-details">
-
-                <h3 class="product-title">
-                    Chicken Offal
-                </h3>
-
-
-                <p class="product-description">
-                    Quality chicken offal produced through proper
-                    processing and farm management practices.
-                </p>
-
-
-            </div>
-
-        </div>
-
-
-
-
-
-        <!-- Pork -->
-
-        <div class="product-card">
-
-            <div class="product-image-container">
-
-                <span class="product-category">
-                    Pig Production
-                </span>
-
-
-                <img src="{{ url_for('static', filename='images/Pork.jpeg') }}"
-                     alt="Pork"
-                     class="product-image">
-
-            </div>
-
-
-            <div class="product-details">
-
-                <h3 class="product-title">
-                    Pork
-                </h3>
-
-
-                <p class="product-description">
-                    Quality pork produced from well-managed pigs
-                    raised at Africa University Farm.
-                </p>
-
-
-            </div>
-
-        </div>
-
-
-
-
-        <!-- Serviced Gilts -->
-
-        <div class="product-card">
-
-            <div class="product-image-container">
-
-                <span class="product-category">
-                    Pig Breeding
-                </span>
-
-
-                <img src="{{ url_for('static', filename='images/servicedgilts.jpeg') }}"
-                     alt="Serviced Gilts"
-                     class="product-image">
-
-            </div>
-
-
-            <div class="product-details">
-
-                <h3 class="product-title">
-                    Serviced Gilts
-                </h3>
-
-
-                <p class="product-description">
-                    Quality breeding animals supporting improved
-                    pig production.
-                </p>
-
-            </div>
-
-        </div>
-
-
-
-
-        <!-- Breeding Boars -->
-
-        <div class="product-card">
-
-            <div class="product-image-container">
-
-                <span class="product-category">
-                    Pig Breeding
-                </span>
-
-
-                <img src="{{ url_for('static', filename='images/breedingboars.jpeg') }}"
-                     alt="Breeding Boars"
-                     class="product-image">
-
-            </div>
-
-
-            <div class="product-details">
-
-                <h3 class="product-title">
-                    Breeding Boars
-                </h3>
-
-
-                <p class="product-description">
-                    Selected breeding boars supporting quality
-                    livestock production.
-                </p>
-
-            </div>
-
-        </div>
-
-
-
-
-        <!-- Eggs -->
-
-        <div class="product-card">
-
-            <div class="product-image-container">
-
-                <span class="product-category">
-                    Poultry
-                </span>
-
-
-                <img src="https://images.unsplash.com/photo-1506976785307-8732e854ad03?auto=format&fit=crop&w=800&q=80"
-                     alt="Farm Fresh Eggs"
-                     class="product-image">
-
-            </div>
-
-
-            <div class="product-details">
-
-                <h3 class="product-title">
-                    Farm Fresh Eggs
-                </h3>
-
-
-                <p class="product-description">
-                    Fresh eggs produced from healthy farm-raised hens.
-                </p>
-
-
-            </div>
-
-        </div>
-
-
+        <a class="text-link" href="{{ url_for('products') }}">View all products <span aria-hidden="true">&#8594;</span></a>
     </div>
 
-
-
+    <div class="product-grid storefront-product-grid">
+        {% for product in featured_products %}
+        <article class="product-card">
+            <a class="product-card-image" href="{{ url_for('product_detail', product_id=product.id) }}" aria-label="View {{ product.name }}">
+                {% if product.image %}
+                <img src="{{ url_for('static', filename='uploads/' + product.image) }}" alt="{{ product.name }}" class="product-image">
+                {% else %}
+                <img src="{{ url_for('static', filename='images/poultry.jpg') }}" alt="{{ product.name }}" class="product-image">
+                {% endif %}
+                <span class="product-category">{{ product.category.name }}</span>
+            </a>
+            <div class="product-details">
+                <h3 class="product-title"><a href="{{ url_for('product_detail', product_id=product.id) }}">{{ product.name }}</a></h3>
+                <p class="product-description">{{ product.description or 'Fresh, quality produce from Africa University Farm.' }}</p>
+                <div class="product-card-footer">
+                    <div>
+                        <p class="product-price">{{ currency_info.symbol }}{{ '%.2f'|format(product.price) }}</p>
+                        <span class="stock-note {% if product.stock <= 0 %}stock-note-out{% endif %}">
+                            {% if product.stock > 0 %}{{ product.stock }} available{% else %}Out of stock{% endif %}
+                        </span>
+                    </div>
+                    {% if product.stock > 0 %}
+                    <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="post">
+                        <input type="hidden" name="quantity" value="1">
+                        <input type="hidden" name="next" value="{{ url_for('home') }}">
+                        <button class="btn btn-add-cart" type="submit" aria-label="Add {{ product.name }} to cart">Add to cart <span aria-hidden="true">+</span></button>
+                    </form>
+                    {% else %}
+                    <button class="btn btn-add-cart" type="button" disabled>Unavailable</button>
+                    {% endif %}
+                </div>
+            </div>
+        </article>
+        {% else %}
+        <div class="storefront-empty-state">
+            <h3>New harvests are on the way</h3>
+            <p>There are no products listed right now. Please check back soon.</p>
+            <a href="{{ url_for('contact') }}" class="text-link">Contact the farm <span aria-hidden="true">&#8594;</span></a>
+        </div>
+        {% endfor %}
+    </div>
 </section>
 
-
-
-<section class="container" style="text-align:center; margin:4rem auto;">
-
-    <h2>
-        Discover Africa University Farm
-    </h2>
-
-
-    <p>
-        Learn about our farming units, production practices,
-        and the story behind AU Market.
-    </p>
-
-
-    <br>
-
-
-    <a href="{{ url_for('categories') }}" class="btn btn-primary">
-        Explore Our Farm
-    </a>
-
-
+<section class="farm-note">
+    <div>
+        <p class="storefront-kicker">Rooted in our community</p>
+        <h2>Raised with care at Africa University.</h2>
+        <p>Explore our production units and discover the people and work behind every product.</p>
+    </div>
+    <a href="{{ url_for('categories') }}" class="btn btn-light">Meet the farm <span aria-hidden="true">&#8594;</span></a>
 </section>
-
-
-
 {% endblock %}
